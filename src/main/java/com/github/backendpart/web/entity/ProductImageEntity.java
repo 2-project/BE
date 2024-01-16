@@ -20,7 +20,7 @@ public class ProductImageEntity {
     private ProductEntity product;
 
     @Column(name = "product_image_name")
-    @Schema(description = "상품 이미지 이름", example = "500메소.png")
+    @Schema(description = "상품 이미지 이름", example = "주황버섯.png")
     private String productImageName;
 
     @Column(name = "product_image_path")

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -44,6 +45,18 @@ public class ProductEntity {
     @Column(name = "product_sale_end")
     @Schema(description = "상품 판매 종료일", example = "1111-11-11")
     private Date productSaleEnd;
+
+    @OneToMany(mappedBy = "product_cid")
+    @Schema(description = "상품 옵션")
+    private List<OptionEntity> options;
+
+    @OneToMany(mappedBy = "product_cid")
+    private List<ProductImageEntity> productImages;
+
+    @ManyToOne
+    @JoinColumn(name = "category_cid", referencedColumnName = "category_cid")
+    @Schema(description = "상품 카테고리", example = "인기상품")
+    private CategoryEntity category;
 
     @Column(name = "created_at")
     @Schema(description = "상품 생성일", example = "1111-11-11 ( 자동생성 )")
