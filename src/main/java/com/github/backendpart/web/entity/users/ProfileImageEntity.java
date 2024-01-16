@@ -7,12 +7,10 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-@EqualsAndHashCode
 @Entity
-@Table(name = "profile_image")
+@Table(name = "profile_image_table")
 public class ProfileImageEntity extends TimeEntity {
     @Id
     @Column(name = "profile_image_cid")

@@ -6,17 +6,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-@EqualsAndHashCode
 @Entity
-@Table(name = "users")
+@Table(name = "users_table")
 public class UserEntity extends TimeEntity {
     @Id
     @Column(name = "user_cid")
