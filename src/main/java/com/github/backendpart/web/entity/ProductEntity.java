@@ -1,5 +1,6 @@
 package com.github.backendpart.web.entity;
 
+import com.github.backendpart.web.entity.users.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
