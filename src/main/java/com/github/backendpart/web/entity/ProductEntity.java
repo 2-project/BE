@@ -47,11 +47,11 @@ public class ProductEntity extends TimeEntity {
     @Schema(description = "상품 판매 종료일", example = "1111-11-11")
     private Date productSaleEnd;
 
-    @OneToMany(mappedBy = "product_cid")
+    @OneToMany(mappedBy = "product")
     @Schema(description = "상품 옵션")
     private List<OptionEntity> options;
 
-    @OneToMany(mappedBy = "product_cid")
+    @OneToMany(mappedBy = "product")
     private List<ProductImageEntity> productImages;
 
     @ManyToOne

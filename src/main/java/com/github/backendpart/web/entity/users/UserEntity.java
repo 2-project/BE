@@ -30,13 +30,13 @@ public class UserEntity extends TimeEntity {
     @Column(name = "user_pwd")
     private String userPwd;
 
-    @Column(name = "user_name", length = 30, columnDefinition = "DEFAULT NULL")
+    @Column(name = "user_name", length = 30)
     private String userName;
 
-    @Column(name = "user_phone", length = 30, columnDefinition = "DEFAULT NULL")
+    @Column(name = "user_phone", length = 30)
     private String userPhone;
 
-    @Column(name = "user_address", length = 100, columnDefinition = "DEFAULT NULL")
+    @Column(name = "user_address", length = 100)
     private String userAddress;
 
     @OneToOne(fetch = FetchType.LAZY)
