@@ -41,4 +41,9 @@ public class CartEntity extends TimeEntity {
         @Column(name = "cart_quantity")
         @Schema(description = "장바구니 물품 수량", example = "5")
         private Integer cartQuantity;
-    }
+
+        @Column(name= "cart_price")
+        @Schema(description = "장바구니 물품 가격", example = "55000")
+        private Integer cartPrice;
+
+}
