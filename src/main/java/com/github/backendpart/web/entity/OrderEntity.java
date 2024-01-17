@@ -20,7 +20,7 @@ public class OrderEntity {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "order_cid")
         @Schema(description = "주문 번호", example = "1")
-        private Integer orderCid;
+        private Long orderCid;
 
         @ManyToOne
         @JoinColumn(name = "user_cart_cid")

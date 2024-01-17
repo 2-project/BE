@@ -14,13 +14,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "product_table")
-public class ProductEntity {
+public class ProductEntity extends TimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_cid")
     @Schema(description = "상품 고유 아이디", example = "1")
-    private Integer productCid;
+    private Long productCid;
 
     @ManyToOne
     @JoinColumn(name = "user_cid", referencedColumnName = "user_cid")
@@ -58,22 +58,4 @@ public class ProductEntity {
     @JoinColumn(name = "category_cid", referencedColumnName = "category_cid")
     @Schema(description = "상품 카테고리", example = "인기상품")
     private CategoryEntity category;
-
-    @Column(name = "created_at")
-    @Schema(description = "상품 생성일", example = "1111-11-11 ( 자동생성 )")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    @Schema(description = "상품 수정일", example = "1111-11-11 ( 자동생성 )")
-    private Date updatedAt;
-
-    @PrePersist
-    protected void onCreate(){
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate(){
-        updatedAt = new Date();
-    }
 }
