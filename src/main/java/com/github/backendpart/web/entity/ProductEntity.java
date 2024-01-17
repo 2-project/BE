@@ -1,11 +1,10 @@
 package com.github.backendpart.web.entity;
 
+import com.github.backendpart.web.dto.product.ProductDto;
 import com.github.backendpart.web.entity.users.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +13,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "product_table")
+@AllArgsConstructor
+@Builder
 public class ProductEntity extends TimeEntity {
 
     @Id
@@ -39,17 +40,10 @@ public class ProductEntity extends TimeEntity {
     @Schema(description = "상품 가격", example = "198000")
     private Integer productPrice;
 
-    @Column(name = "product_sale_start")
-    @Schema(description = "상품 판매 시작일", example = "1111-11-11")
-    private Date productSaleStart;
-
-    @Column(name = "product_sale_end")
-    @Schema(description = "상품 판매 종료일", example = "1111-11-11")
-    private Date productSaleEnd;
-
-    @OneToMany(mappedBy = "product")
+    //옵션 하나만 가져서 변경
+    @OneToOne(mappedBy = "product")
     @Schema(description = "상품 옵션")
-    private List<OptionEntity> options;
+    private OptionEntity options;
 
     @OneToMany(mappedBy = "product")
     private List<ProductImageEntity> productImages;
@@ -58,4 +52,28 @@ public class ProductEntity extends TimeEntity {
     @JoinColumn(name = "category_cid", referencedColumnName = "category_cid")
     @Schema(description = "상품 카테고리", example = "인기상품")
     private CategoryEntity category;
+
+    // 일단 제외
+//    @Column(name = "product_sale_start")
+//    @Schema(description = "상품 판매 시작일", example = "1111-11-11")
+//    private Date productSaleStart;
+//
+//    @Column(name = "product_sale_end")
+//    @Schema(description = "상품 판매 종료일", example = "1111-11-11")
+//    private Date productSaleEnd;
+
+
+    //일단킵
+//    public static ProductEntity toEntity(ProductDto productDto){
+//        return ProductEntity.builder()
+//                .productCid()
+//                .user
+//                .productName
+//                .productDescription
+//                .options
+//                .productImages
+//                .category
+//                .build();
+//    }
+
 }
