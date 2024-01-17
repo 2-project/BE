@@ -1,6 +1,7 @@
 package com.github.backendpart.web.entity;
 
 
+import com.github.backendpart.web.entity.users.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ public class UserCartEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_cart_cid")
     @Schema(description = "장바구니 고유 번호", example = "1")
-    private Integer userCartCid;
+    private Long userCartCid;
 
     @OneToOne
     @JoinColumn(name = "user_cid")

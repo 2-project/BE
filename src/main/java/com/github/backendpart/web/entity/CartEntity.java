@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cart_table")
-public class CartEntity {
+public class CartEntity extends TimeEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "cart_cid")
         @Schema(description = "장바구니 개별 번호", example = "1")
-        private Integer cartCid;
+        private Long cartCid;
 
         @ManyToOne
         @JoinColumn(name = "user_cart_cid")
@@ -41,13 +41,4 @@ public class CartEntity {
         @Column(name = "cart_quantity")
         @Schema(description = "장바구니 물품 수량", example = "5")
         private Integer cartQuantity;
-
-        @Column(name = "created_at")
-        @Schema(description = "장바구니 추가 날짜", example = "1111-11-11")
-        private LocalDateTime createdAt;
-
-        @Column(name = "updated_at")
-        @Schema(description = "장바구니 수정 날짜", example = "1111-11-11")
-        private LocalDateTime updatedAt;
-
     }

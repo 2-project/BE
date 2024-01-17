@@ -8,12 +8,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "category_table")
-public class CategoryEntity {
+public class CategoryEntity extends TimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_cid")
     @Schema(description = "카테고리 고유 아이디")
-    private Integer categoryCid;
+    private Long categoryCid;
 
     @OneToMany(mappedBy = "category_cid")
     private List<ProductEntity> products;
@@ -22,21 +22,4 @@ public class CategoryEntity {
     @Schema(description = "카테고리 이름",example = "인기상품")
     private String categoryName;
 
-    @Column(name = "created_at")
-    @Schema(description = "생성일")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    @Schema(description = "수정일")
-    private Date updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
 }
