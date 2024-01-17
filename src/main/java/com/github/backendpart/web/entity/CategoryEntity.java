@@ -15,7 +15,7 @@ public class CategoryEntity extends TimeEntity {
     @Schema(description = "카테고리 고유 아이디")
     private Long categoryCid;
 
-    @OneToMany(mappedBy = "category_cid")
+    @OneToMany(mappedBy = "category")
     private List<ProductEntity> products;
 
     @Column(name = "category_name")

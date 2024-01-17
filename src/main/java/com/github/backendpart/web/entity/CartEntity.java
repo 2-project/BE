@@ -25,12 +25,12 @@ public class CartEntity extends TimeEntity {
         private UserCartEntity userCart;
 
         @ManyToOne
-        @Column(name = "product_cid")
+        @JoinColumn(name = "product_cid", referencedColumnName = "product_cid")
         @Schema(description = "물품")
         private ProductEntity product;
 
         @ManyToOne
-        @Column(name = "option_cid")
+        @JoinColumn(name = "option_cid", referencedColumnName = "option_cid")
         @Schema(description = "물품 옵션")
         private OptionEntity option;
 
