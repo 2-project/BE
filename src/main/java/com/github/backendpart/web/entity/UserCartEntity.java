@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,5 +24,9 @@ public class UserCartEntity {
     @JoinColumn(name = "user_cid")
     @Schema(description = "유저")
     private UserEntity user;
+
+    @OneToMany
+    @JoinColumn(name = "userCart")
+    private List<CartEntity> cartList;
 
 }
