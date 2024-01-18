@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "order_table")
-public class OrderEntity {
+public class OrderEntity extends TimeEntity{
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,29 +31,16 @@ public class OrderEntity {
         @Schema(description = "주문 상태", example = "주문 완료")
         private String orderStatus;
 
-        @Column(name = "order_quantity")
-        @Schema(description = "주문 수량", example = "주문한 물품 총 수량이 들어가는 곳입니다.")
-        private String orderQuantity;
+        @Column(name = "recipient")
+        @Schema(description = "수령인", example = "홍길동")
+        private String recipient;
 
-        @Column(name = "order_total_price")
-        @Schema(description = "주문 총 가격", example = "198000")
-        private Integer orderTotalPrice;
+        @Column(name = "shipping_address")
+        @Schema(description = "배송지", example = "경기도 성남시")
+        private String shippingAddress;
 
-        @Column(name = "created_at")
-        @Schema(description = "주문 날짜", example = "1111-11-11")
-        private LocalDateTime orderAt;
-
-        @Column(name = "updated_at")
-        @Schema(description = "주문 상태 변경 날짜", example = "1111-11-11")
-        private LocalDateTime updatedAt;
-
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+        @Column(name = "phone_number")
+        @Schema(description = "수령인 전화번호", example = "010-1234-5678")
+        private String phoneNum;
 
 }
