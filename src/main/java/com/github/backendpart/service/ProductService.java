@@ -77,4 +77,24 @@ public class ProductService {
                     .build();
         }
     }
+
+    public CommonResponseDto deleteProduct(Long productCid) {
+        ProductEntity targetProduct = productRepository.findById(productCid).orElseGet(null);
+        if(targetProduct != null){
+            productRepository.delete(targetProduct);
+
+            return CommonResponseDto.builder()
+                    .code(200)
+                    .message("'" + targetProduct.getProductName() + "' 상품을 삭제하였습니다.")
+                    .success(true)
+                    .build();
+        } else{
+            log.error("[DELETE] 상품을 삭제하지 못하였습니다.");
+            return CommonResponseDto.builder()
+                    .code(400)
+                    .message("상품이 존재하지 않습니다.")
+                    .success(false)
+                    .build();
+        }
+    }
 }

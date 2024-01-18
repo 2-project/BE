@@ -24,10 +24,21 @@ public class ProductController {
             @RequestPart(name = "productInfo") AddProductRequestDto addProductRequestDto,
             @RequestPart(name = "productImages", required = false) List<MultipartFile> productImages
             ){
-        log.info("[Post](productController) 새로운 상품 추가 요청이 들어왔습니다. product = " + addProductRequestDto);
-        CommonResponseDto result = productService.addProduct(addProductRequestDto, productImages);
-        log.info(("[POST] addProduct결과 = " + result));
+        log.info("[POST](productController) 새로운 상품 추가 요청이 들어왔습니다. product = " + addProductRequestDto);
+        CommonResponseDto addProductResult = productService.addProduct(addProductRequestDto, productImages);
+        log.info(("[POST] addProduct결과 = " + addProductResult));
 
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(addProductResult);
+    }
+
+    @DeleteMapping("/{productCid}")
+    public ResponseEntity<CommonResponseDto> deleteProduct(
+            @PathVariable Long productCid
+    ){
+        log.info("[DELETE] 상품 삭제 요청이 들어왔습니다.");
+        CommonResponseDto deleteProductResult = productService.deleteProduct(productCid);
+        log.info("[DELETE] deleteProduct결과 = " + deleteProductResult);
+
+        return ResponseEntity.ok().body(deleteProductResult);
     }
 }
