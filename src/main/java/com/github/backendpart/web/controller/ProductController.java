@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-    @GetMapping("api/product/productDetail/{productId}")
+    @GetMapping("productDetail/{productId}")
     @Operation(summary = "상품 상세 조회")
     public ResponseEntity<ProductDto> getProductDetail(@PathVariable long productId){
         log.info("GET 상세 조회 요청이 들어왔습니다");
@@ -26,11 +26,13 @@ public class ProductController {
         return ResponseEntity.ok().body(productDto);
     }
 
-    @GetMapping("api/product/")
+    @GetMapping("")
     @Operation(summary = "상품 카테고리별 조회")
     public ResponseEntity<List<ProductDto>> getProduct(@RequestParam String categoryName){
+        log.info("GET 상품 카테고리별 조회 요청이 들어왔습니다");
         List<ProductDto> categoryProducts = new ArrayList<>();
         //TODO 기능구현 해야함
+        log.info("GET 상품 카테고리별 조회 응답 값 = " + categoryProducts);
         return ResponseEntity.ok().body(categoryProducts);
     }
 
