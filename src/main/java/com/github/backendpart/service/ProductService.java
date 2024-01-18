@@ -78,17 +78,18 @@ public class ProductService {
         }
     }
 
-    public CommonResponseDto deleteProduct(Long productCid) {
-        ProductEntity targetProduct = productRepository.findById(productCid).orElseGet(null);
-        if(targetProduct != null){
-            productRepository.delete(targetProduct);
+    public CommonResponseDto deleteProduct(List<Long> productCidList) {
 
+        try{
+            for(Long targetCid: productCidList){
+            productRepository.deleteById(targetCid);
+            }
             return CommonResponseDto.builder()
                     .code(200)
-                    .message("'" + targetProduct.getProductName() + "' 상품을 삭제하였습니다.")
+                    .message("상품 삭제가 완료되었습니다..")
                     .success(true)
                     .build();
-        } else{
+        }catch (Exception e){
             log.error("[DELETE] 상품을 삭제하지 못하였습니다.");
             return CommonResponseDto.builder()
                     .code(400)

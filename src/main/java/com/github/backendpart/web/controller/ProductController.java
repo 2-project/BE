@@ -3,6 +3,7 @@ package com.github.backendpart.web.controller;
 import com.github.backendpart.service.ProductService;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,12 +32,13 @@ public class ProductController {
         return ResponseEntity.ok().body(addProductResult);
     }
 
-    @DeleteMapping("/{productCid}")
+    @DeleteMapping("/deleteProduct")
     public ResponseEntity<CommonResponseDto> deleteProduct(
-            @PathVariable Long productCid
+            @Schema(description = "상품 cid 리스트", example = "[ 1, 2, 4 ]")
+            @RequestBody List<Long> productCidList
     ){
         log.info("[DELETE] 상품 삭제 요청이 들어왔습니다.");
-        CommonResponseDto deleteProductResult = productService.deleteProduct(productCid);
+        CommonResponseDto deleteProductResult = productService.deleteProduct(productCidList);
         log.info("[DELETE] deleteProduct결과 = " + deleteProductResult);
 
         return ResponseEntity.ok().body(deleteProductResult);
