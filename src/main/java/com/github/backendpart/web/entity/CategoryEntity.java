@@ -2,11 +2,16 @@ package com.github.backendpart.web.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(name = "category_table")
 public class CategoryEntity extends TimeEntity {
     @Id
@@ -19,7 +24,7 @@ public class CategoryEntity extends TimeEntity {
     private List<ProductEntity> products;
 
     @Column(name = "category_name")
-    @Schema(description = "카테고리 이름",example = "인기상품")
+    @Schema(description = "카테고리 이름", example = "인기상품")
     private String categoryName;
 
 }
