@@ -5,10 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Entity
 @Table(name = "profile_image_table")
 public class ProfileImageEntity extends TimeEntity {

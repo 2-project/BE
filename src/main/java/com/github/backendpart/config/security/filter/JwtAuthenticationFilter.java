@@ -23,16 +23,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private static final String PREFIX = "Bearer";
 
-
     // SecurityContext에 Access Token으로부터 뽑아온 인증 정보를 저장.
     // SecurityContext는 어디서든 접근 가능한데, 정상적으로 Filter를 통과하여 Controller에 도착한다면, SecurityContext내부에 User의 username이 있다는 것이 보장
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
       String jwt = resolveToken(request);
 
-      if(StringUtils.hasText(jwt) && jwtTokenProvider.validationToken(jwt)) {
-        Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+      if(jwt != null) {
+        boolean validation = jwtTokenProvider.validationToken(jwt);
+        if(validation) {
+          Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        else {
+          SecurityContextHolder.getContext().setAuthentication(jwtTokenProvider.checkRefreshToken(jwt));
+        }
       }
       filterChain.doFilter(request, response);
     }

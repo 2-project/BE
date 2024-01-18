@@ -29,22 +29,21 @@ public class JwtTokenProvider {
     private static final Long accessTokenTime = 30 * 60 * 1000L;   //30분
     private static final Long refreshTokenTime = 7 * 24 * 60 * 60 * 1000L;  //7일
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey){
+    public JwtTokenProvider(@Value("${spring.jwt.secret}")String secretKey){
+      log.info("Secret Key: {}", secretKey);
       byte[] keyBytes = Base64.getDecoder().decode(secretKey);
       this.encodeKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //accessToken과 refreshToken을 생성함
+    // accessToken과 refreshToken을 생성함
     // @param subject
     // @return TokenDto
     public TokenDto createTokenDto(String userId, List<Roles> roles){
+        //권한을 하나의 String으로 합침
         String authority = roles.stream().map(Roles::getType).collect(Collectors.joining(","));
 
         //토큰 생성시간
         Instant now = Instant.from(OffsetDateTime.now());
-
-        //accessToken 만료시간
-        Instant refreshTokenExpirationDate = now.plusMillis(refreshTokenTime);
 
         //accessToken 생성
         String accessToken = Jwts.builder()
@@ -84,10 +83,34 @@ public class JwtTokenProvider {
       return new UsernamePasswordAuthenticationToken(user, "", roles);
     }
 
+    public Authentication checkRefreshToken(String refreshToken) throws ExpiredJwtException {
+      Claims claims = Jwts.parserBuilder().setSigningKey(encodeKey).build().parseClaimsJws(refreshToken).getBody();
+
+      UserDetails user = new User(claims.getSubject(), "", null);
+      return new UsernamePasswordAuthenticationToken(user, "", null);
+    }
+
+    public boolean tokenMatches(String accessToken, String refreshToken) {
+      Claims accessTokenClaim = Jwts.parserBuilder().setSigningKey(encodeKey).build().parseClaimsJws(accessToken).getBody();
+      Claims refreshTokenClaim = Jwts.parserBuilder().setSigningKey(encodeKey).build().parseClaimsJws(refreshToken).getBody();
+
+      if(accessTokenClaim.getSubject().equals(refreshTokenClaim.getSubject()))
+        return true;
+
+      return false;
+    }
+
+
     public boolean validationToken(String tokenKey){
         try {
-          Jwts.parserBuilder().setSigningKey(encodeKey).build().parseClaimsJws(tokenKey);
-          return true;
+          //access token
+          Claims claims = Jwts.parserBuilder().setSigningKey(encodeKey).build().parseClaimsJws(tokenKey).getBody();
+          if (claims.containsKey("role")) {
+            return true;
+          }
+
+          //refresh token
+          return false;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
           log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
