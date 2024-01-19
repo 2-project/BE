@@ -79,5 +79,5 @@ jobs:
           --application-name ${{ secrets.AWS_CODEDEPLOY_APPLICATION_NAME }} \
           --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_GROUP_NAME }} \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=deployFile$ZIP_FILE_NAME.zip \
+          --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=deployFile/$ZIP_FILE_NAME.zip \
            --region ${{ secrets.AWS_DEFAULT_REGION }}
