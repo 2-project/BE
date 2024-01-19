@@ -36,12 +36,12 @@ logging:
 cloud:
   aws:
     credentials:
-      access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      access-key: AKIAZI2LFHYXL6MRUXVR
+      secret-key: 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
     s3:
-      bucketName: ${{ secrets.AWS_S3_BUCKET_NAME }}
+      bucketName: 2-backend-image
     region:
-      static: ${{ secrets.AWS_DEFAULT_REGION }}
+      static: ap-northeast-2
     stack:
       auto: false
 
