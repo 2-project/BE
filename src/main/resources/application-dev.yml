@@ -6,9 +6,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mariadb://mariadb.chegyyioe8xx.ap-northeast-2.rds.amazonaws.com:3306/shopping_mall
-    username: admin
-    password: ${{ secrets.MARIADB_PASSWORD }}
+    url: ${{ secrets.DB_URL }}
+    username: ${{ secrets.DB_ID }}
+    password: ${{ secrets.DB_PASSWORD }}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
