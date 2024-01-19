@@ -2,10 +2,15 @@ package com.github.backendpart.web.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
 @Table(name = "option_table")
 public class OptionEntity extends TimeEntity {
     @Id
