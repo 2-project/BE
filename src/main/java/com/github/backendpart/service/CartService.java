@@ -5,6 +5,7 @@ package com.github.backendpart.service;
 import com.github.backendpart.repository.*;
 import com.github.backendpart.web.dto.cart.AddCartDto;
 import com.github.backendpart.web.dto.cart.CartDto;
+import com.github.backendpart.web.dto.cart.ResultAddCartDto;
 import com.github.backendpart.web.dto.cart.UpdateCartDTO;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.entity.CartEntity;
@@ -42,9 +43,9 @@ public class CartService {
         Long userId = 1L;
         UserEntity user = userInfoRepository.findById(userId).orElseThrow();
         UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
-        List<CartEntity> userCartList = userCart.getCartList();
+        List<CartEntity> cartList = userCart.getCartList();
         // "주문 완료"된 장바구니는 포함시키지 않아야함
-        List<CartEntity> NowUserCartList = userCartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
+        List<CartEntity> NowUserCartList = cartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
         // 리스트에서 카트 하나씩 빼와서 mapper로 dto로 바꾸기
         List<CartDto> cartListdto = NowUserCartList.stream().map(CartMapper.INSTANCE::CartEntityToDTO).collect(Collectors.toList());
         return cartListdto;
@@ -53,7 +54,7 @@ public class CartService {
     }
 
 
-    @Transactional //삭제 로직 실행 o
+    @Transactional
     public CommonResponseDto deleteCart(Long productId) {
         productId = 1L;
         ProductEntity product = productRepository.findById(productId).orElseThrow(); // 못찾았을데 notfound에러
@@ -67,7 +68,7 @@ public class CartService {
 
 
 
-    public CommonResponseDto addCart(Long productid, AddCartDto addCartDTO) {
+    public ResultAddCartDto addCart(Long productid, AddCartDto addCartDTO) {
         Long optionId = addCartDTO.getOptionid();
         OptionEntity option = optionRepository.findById(optionId).orElseThrow();
         ProductEntity product = productRepository.findById(productid).orElseThrow();
@@ -83,14 +84,15 @@ public class CartService {
             if(!isAlreadyInCart){
                 CartEntity cart = new CartEntity(null,usercart,product,option,"주문 전", quantity );
                 cartRepository.save(cart);
-                return CommonResponseDto.builder()
+                return ResultAddCartDto.builder()
                         .success(true)
                         .code(200)
                         .message("장바구니에 물품이 등록되었습니다.")
+                        .cartId(cart.getCartCid())
                         .build();
             }
             else {
-                return CommonResponseDto.builder()
+                return ResultAddCartDto.builder()
                         .success(false)
                         .code(404)
                         .message("이미 장바구니에 존재하는 물건입니다")
@@ -101,13 +103,12 @@ public class CartService {
             UserCartEntity usercart = UserCartEntity.builder().user(user).build();
             CartEntity cart = new CartEntity(null, usercart, product, option, "주문 전", quantity);
             cartRepository.save(cart);
-            return CommonResponseDto.builder()
+            return ResultAddCartDto.builder()
                     .success(true)
                     .code(200)
                     .message("장바구니에 물품이 등록되었습니다.")
+                    .cartId(cart.getCartCid())
                     .build();
-
-
         }
     }
 
