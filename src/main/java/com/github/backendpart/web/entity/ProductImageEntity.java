@@ -2,18 +2,14 @@ package com.github.backendpart.web.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.Date;
 
 @Entity
-@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@Getter
 @Table(name = "product_image_table")
 public class ProductImageEntity extends TimeEntity {
     @Id

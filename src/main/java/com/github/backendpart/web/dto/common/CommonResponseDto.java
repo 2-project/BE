@@ -1,14 +1,13 @@
 package com.github.backendpart.web.dto.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @ToString
 public class CommonResponseDto {
     @Schema(description = "요청의 성공 상태", example = "true")

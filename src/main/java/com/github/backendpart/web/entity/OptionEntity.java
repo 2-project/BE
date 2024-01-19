@@ -3,18 +3,14 @@ package com.github.backendpart.web.entity;
 import com.github.backendpart.web.dto.product.ProductDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.util.Date;
 
 @Entity
-@Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 @Table(name = "option_table")
 public class OptionEntity extends TimeEntity {
     @Id
