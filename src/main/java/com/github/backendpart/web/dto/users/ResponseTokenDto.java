@@ -1,5 +1,6 @@
 package com.github.backendpart.web.dto.users;
 
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
+@JsonNaming()
 public class ResponseTokenDto {
     private String accessToken;
-    private boolean isNewUser;
+    private String refreshToken;
 }

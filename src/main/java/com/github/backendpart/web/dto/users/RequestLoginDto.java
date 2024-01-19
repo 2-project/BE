@@ -15,9 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RequestLoginDto {
     private String userId;
-    private String password;
+    private String userPwd;
 
     public UsernamePasswordAuthenticationToken toAuthentication() {
-      return new UsernamePasswordAuthenticationToken(userId, password);
+      return new UsernamePasswordAuthenticationToken(userId, userPwd);
     }
 }

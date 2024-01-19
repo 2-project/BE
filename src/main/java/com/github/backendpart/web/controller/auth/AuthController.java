@@ -1,10 +1,11 @@
 package com.github.backendpart.web.controller.auth;
 
 import com.github.backendpart.config.security.util.SecurityUtil;
-import com.github.backendpart.service.auth.AuthService;
+
 import com.github.backendpart.service.auth.TokenService;
 import com.github.backendpart.service.auth.UsersService;
 import com.github.backendpart.web.dto.users.*;
+import com.github.backendpart.web.entity.users.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,8 +50,8 @@ public class AuthController {
               .build();
 
       ResponseTokenDto tokenResponseDTO = ResponseTokenDto.builder()
-              .isNewUser(false)
               .accessToken(tokenDTO.getAccessToken())
+              .refreshToken(tokenDTO.getRefreshToken())
               .build();
 
       return ResponseEntity.ok().header("Set-Cookie", responseCookie.toString()).body(tokenResponseDTO);
@@ -63,7 +65,10 @@ public class AuthController {
 
     @Operation(summary = "토큰 갱신")
     @PostMapping("/refreshToken")
-    public ResponseEntity<TokenDto> refreshToken(@RequestBody TokenDto tokenDTO) {
-      return ResponseEntity.ok(tokenService.refresh(tokenDTO));
+    public ResponseEntity<TokenDto> refreshToken(@RequestBody TokenDto tokenDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+      log.info("principalDetails : {}", customUserDetails.toString());
+
+      TokenDto result = tokenService.refresh(tokenDTO, customUserDetails);
+      return ResponseEntity.ok(result);
     }
 }
