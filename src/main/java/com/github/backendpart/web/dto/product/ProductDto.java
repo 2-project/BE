@@ -5,9 +5,6 @@ import com.github.backendpart.web.entity.ProductEntity;
 import com.github.backendpart.web.entity.ProductImageEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,10 +18,6 @@ import java.util.List;
 public class ProductDto {
     @Schema(description = "상품 고유 아이디", example = "1")
     private Long productCid;
-
-    // UserDto가 없어서 일단 주석처리 후에 필요하지 않다면 삭제도 생각중입니다.
-//    @Schema(description = "상품등록 유저 정보")
-//    private UserDTO user;
 
     @Schema(description = "상품 이름", example = "상품 A")
     private String productName;

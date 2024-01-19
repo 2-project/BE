@@ -1,9 +1,9 @@
 package com.github.backendpart.web.entity;
 
+import com.github.backendpart.web.dto.product.ProductDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
 
 @Entity
@@ -18,7 +18,7 @@ public class OptionEntity extends TimeEntity {
     @Column(name = "option_cid")
     private Long optionCid;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "product_cid", referencedColumnName = "product_cid")
     @Schema(description = "상품 Entity")
     private ProductEntity product;
@@ -30,4 +30,6 @@ public class OptionEntity extends TimeEntity {
     @Column(name = "option_stock")
     @Schema(description = "상품 옵션 별 재고",example = "1")
     private Integer optionStock;
+
+
 }

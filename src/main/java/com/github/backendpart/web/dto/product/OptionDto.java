@@ -24,6 +24,7 @@ public class OptionDto {
     @Schema(description = "상품 옵션 별 재고", example = "1")
     private Integer optionStock;
 
+
     public static OptionEntity toEntity(OptionDto optionDto) {
         return OptionEntity.builder()
                 .optionName(optionDto.getOptionName())

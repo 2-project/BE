@@ -1,5 +1,6 @@
 package com.github.backendpart.web.dto.product;
 
+import com.github.backendpart.web.entity.OptionEntity;
 import com.github.backendpart.repository.ProductImageRepository;
 import com.github.backendpart.web.entity.ProductEntity;
 import com.github.backendpart.web.entity.ProductImageEntity;

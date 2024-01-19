@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 @Service
@@ -25,6 +24,14 @@ public class ProductService {
 
     private final ImageUploadService imageUploadService;
     private final OptionService optionService;
+    
+    public ProductDto findById(long productId){
+        ProductEntity targetProduct = productRepository.findById(productId).orElse(null);
+        ProductDto targetProductDto = ProductDto.toDto(targetProduct);
+        return targetProductDto;
+    }
+    
+    
     public CommonResponseDto addProduct(AddProductRequestDto addProductRequestDto, List<MultipartFile> images){
         //TODO
         // 1. 이미지와 옵션이 비어있는 product를 생성
