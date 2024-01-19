@@ -4,15 +4,16 @@ package com.github.backendpart.web.entity;
 import com.github.backendpart.web.entity.users.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@Builder
+@AllArgsConstructor
 @Table(name = "user_cart_table")
 public class UserCartEntity {
     @Id
@@ -26,8 +27,7 @@ public class UserCartEntity {
     @Schema(description = "유저")
     private UserEntity user;
 
-    @OneToMany
-    @JoinColumn(name = "userCart")
+    @OneToMany(mappedBy = "userCart", fetch = FetchType.EAGER)
     private List<CartEntity> cartList;
 
 }
