@@ -18,7 +18,7 @@ public class OptionEntity extends TimeEntity {
     @Column(name = "option_cid")
     private Long optionCid;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_cid", referencedColumnName = "product_cid")
     @Schema(description = "상품 Entity")
     private ProductEntity product;
