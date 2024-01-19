@@ -6,9 +6,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: ${{ secrets.DB_URL }}
-    username: ${{ secrets.DB_ID }}
-    password: ${{ secrets.DB_PASSWORD }}
+    url: ${url}
+    username: ${username}
+    password: ${password}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:

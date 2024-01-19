@@ -33,6 +33,16 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      # yml파일 설정
+      - name: Set Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-dev.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+
       # 디렉토리 생성
       - name: Make Directory
         run: mkdir -p deploy
