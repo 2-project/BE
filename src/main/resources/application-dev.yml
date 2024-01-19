@@ -7,7 +7,7 @@ spring:
       on-profile: dev
   datasource:
     url: jdbc:mariadb://database-1.c3eugsugcqkx.ap-northeast-2.rds.amazonaws.com:3306/server_db
-    username: root
+    username: admin
     password: ${{ MARIADB_PASSWORD }}
     driver-class-name: org.mariadb.jdbc.Driver
 
