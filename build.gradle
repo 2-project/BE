@@ -55,7 +55,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-tasks.named('bootJar'){
-    mainClass ='org.supercoding.server.ServerApplication'
-}
