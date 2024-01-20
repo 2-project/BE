@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @Table(name = "option_table")
 public class OptionEntity extends TimeEntity {
     @Id
