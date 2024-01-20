@@ -10,6 +10,7 @@ import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/api/product")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "상품 관리 API", description = "상품 추가 및 조회를 담당하는 api입니다.")
 public class ProductController {
     private final ProductService productService;
     @GetMapping("/productDetail/{productId}")
@@ -46,6 +48,7 @@ public class ProductController {
 
 
     @PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "상품 추가 요청", description = "스웨거에서 테스트를 진행할 떄에는 productInfo도 json파일로 생성해서 테스트 진행해 주셔야합니다.")
     public ResponseEntity<CommonResponseDto> addProduct(
             @RequestPart(name = "productInfo") @Parameter(schema =@Schema(type = "string", format = "binary")) AddProductRequestDto addProductRequestDto,
             @RequestPart(name = "productImages", required = false) List<MultipartFile> productImages
@@ -58,6 +61,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/deleteProduct")
+    @Operation(summary = "상품 삭제 요청")
     public ResponseEntity<CommonResponseDto> deleteProduct(
             @Schema(description = "상품 cid 리스트", example = "[ 1, 2, 4 ]")
             @RequestBody List<Long> productCidList
