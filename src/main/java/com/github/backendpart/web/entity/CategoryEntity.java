@@ -1,5 +1,6 @@
 package com.github.backendpart.web.entity;
 
+import com.github.backendpart.web.dto.product.CategoryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,9 +19,6 @@ public class CategoryEntity extends TimeEntity {
     @Column(name = "category_cid")
     @Schema(description = "카테고리 고유 아이디")
     private Long categoryCid;
-
-    @OneToMany(mappedBy = "category")
-    private List<ProductEntity> products;
 
     @Column(name = "category_name")
     @Schema(description = "카테고리 이름", example = "인기상품")
