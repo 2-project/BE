@@ -16,5 +16,6 @@ public interface OrderMapper {
     @Mapping(target = "size", source = "option.optionName")
     @Mapping(target = "quantity", source = "cartQuantity")
     @Mapping(target = "price", source = "product.productPrice")
+    @Mapping(target = "productDescription", source = "product.productDescription")
     OrderProductListDto CartEntityToDTO(CartEntity cartEntity);
 }

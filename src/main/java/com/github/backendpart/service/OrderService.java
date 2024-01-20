@@ -1,9 +1,8 @@
 package com.github.backendpart.service;
 
 import com.github.backendpart.repository.*;
-import com.github.backendpart.web.dto.cart.CartDto;
-import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.order.OrderDto;
+import com.github.backendpart.web.dto.order.PayInfoDto;
 import com.github.backendpart.web.dto.order.OrderProductListDto;
 import com.github.backendpart.web.dto.order.PayOrderDto;
 import com.github.backendpart.web.entity.*;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -28,46 +26,67 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
-    public List<OrderProductListDto> getOrderlist() {
-        //1. 토큰에서 유저정보 빼오기
+    public OrderDto orderCart() {
+        // <장바구니에 담긴 물품 목록을 주문페이지에서도 보여주는 로직>
+        // 1. 토큰에서 유저정보 빼오기
 //        Long userId = 토큰.getUserId;
         Long userId = 1l;
         UserEntity user = userInfoRepository.findById(userId).orElseThrow();
-        List<CartEntity> userCartList = userCartRepository.findUserCartEntityByUser(user).getCartList();
+        List<CartEntity> cartList = userCartRepository.findUserCartEntityByUser(user).getCartList();
+        // 2. "주문 완료"된 장바구니는 포함시키지 않아야함
+        List<CartEntity> NowCartList = cartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
+        List<ProductEntity> productList = NowCartList.stream().map(CartEntity::getProduct).toList();
+        // 3. 첫번째 이미지 주소와 이름 빼오기(대표사진)
+        List<String> imgAddress = productList.stream().map(product -> product.getProductImages().get(0).getProductImagePath()).toList();
+        List<String> imgName = productList.stream().map(product -> product.getProductImages().get(0).getProductImageName()).toList();
+        // 4. 리스트에서 카트 하나씩 빼와서 mapper 및 for문으로 dto로 바꾸기
+        List<OrderProductListDto> orderListDTO = NowCartList.stream().map(OrderMapper.INSTANCE::CartEntityToDTO).toList();
 
+        for(int i=0;i<orderListDTO.size();i++){
+            orderListDTO.get(i).setImagename(imgAddress.get(i));
+            orderListDTO.get(i).setImageAddress(imgName.get(i));
+        }
 
-        // 리스트에서 카트 하나씩 빼와서 mapper로 dto로 바꾸기
-        List<OrderProductListDto> cartListdto = userCartList.stream().map(OrderMapper.INSTANCE::CartEntityToDTO).collect(Collectors.toList());
-
-
-        //주문 페이지로 접속한 순간 장바구니 상태를 "주문완료"상태로 만들기
-        for(CartEntity cart:userCartList){
+        // <주문 테이블 생성 로직>
+        // 1. 새로운 order Entity 생성
+        OrderEntity order = new OrderEntity(null,"주문완료");
+        OrderEntity newOrder = orderRepository.save(order);
+        Long orderId = newOrder.getOrderCid();
+        // 2. 장바구니 상태를 "주문완료"상태로 만들기, 장바구니에 주문 엔티티 넣기
+        for(CartEntity cart:NowCartList){
             cart.setCartStatus("주문완료");
+            cart.setOrder(order);
             cartRepository.save(cart);
         }
 
-        return cartListdto;
+        // 3. orderDto 반환
+        return OrderDto.builder().orderId(orderId).orderProductList(orderListDTO).build();
     }
 
 
-    public PayOrderDto orderCart(OrderDto orderDto) {
-        // order 테이블 생성
-        UserEntity user = userInfoRepository.findById(1L).orElseThrow(); //토큰에서 빼오기
-        UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
-        OrderEntity order = OrderEntity.builder().orderStatus("결제완료").userCart(userCart)
-                .recipient(orderDto.getRecipientName()).phoneNum(orderDto.getPhoneNum())
-                .shippingAddress(orderDto.getAddress()).build();
+    public PayOrderDto payOrder(Long orderId, PayInfoDto payInfoDto) {
+
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+
+        order.setOrderStatus("결제완료");
+        order.setRecipient(payInfoDto.getRecipientName());
+        order.setShippingAddress(payInfoDto.getAddress());
+        order.setPhoneNum(payInfoDto.getPhoneNum());
 
         orderRepository.save(order);
-        Long orderId = order.getOrderCid();
+
+
 
         // orderdto에서 해당 배송지를 기본배송지로 등록 true했다면, 유저의 배송지 바꾸기
-        if(orderDto.isDefaultAddress()){
-            user.setUserAddress(orderDto.getAddress());
+        if(payInfoDto.isDefaultAddress()){
+            Long userId = 1l;
+            UserEntity user = userInfoRepository.findById(userId).orElseThrow();
+            user.setUserAddress(payInfoDto.getAddress());
         }
 
+
         // "결제완료"상태 되면 옵션의 재고에서 주문 수량 빼기
-        List<CartEntity> cartList = cartRepository.findAllByUserCart(userCart);  // cartService의 findAllCart 로직하고 비교해보기 -- 하나로 뭉치기
+        List<CartEntity> cartList = cartRepository.findAllByOrder(order);
         List<OptionEntity> optionList = cartList.stream().map(CartEntity::getOption).toList();
 
         for(int i=0;i<optionList.size();i++){
@@ -76,13 +95,7 @@ public class OrderService {
         optionRepository.save(optionList.get(i));
          }
 
-        return PayOrderDto.builder().code(200).success(true).message("(주문id: "+orderId+") 결제 완료되었습니다!").orderId(orderId).build();
+        return PayOrderDto.builder().code(200).success(true).message("결제 완료되었습니다!").build();
     }
-
-
-
-
-
-
 }
 

@@ -3,20 +3,18 @@ package com.github.backendpart.web.dto.order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class OrderDto {
-    @Schema(description = "수령인",nullable = false,example = "희주")
-    private String recipientName;
-    @Schema(description = "연락처",nullable = false,example = "010-1234-5678")
-    private String phoneNum;
-    @Schema(description = "배송지",nullable = false,example = "서울시 동교동")
-    private String address;
-    @Schema(description = "기본 배송지로 등록하기",nullable = false,example = "true")
-    private boolean isDefaultAddress;
-    @Schema(description = "배송메시지",nullable = false,example = "잘 배송해주세요~")
-    private String message;
+    @Schema(description = "주문 고유 번호",nullable = false,example = "1")
+    private Long orderId;
+
+    @Schema(description = "주문 리스트",nullable = false,example = "물품이름,옵션 등")
+    private List<OrderProductListDto> orderProductList;
+
 }

@@ -18,8 +18,4 @@ public class PayOrderDto {
     @Schema(description = "요청 코드의 성공(에러) 메시지", example = "결제실패하였습니다")
     private String message;
 
-    @Schema(description = "주문 번호", example = "1")
-    private Long orderId;
-
-
 }

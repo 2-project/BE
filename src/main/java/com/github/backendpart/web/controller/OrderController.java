@@ -1,20 +1,15 @@
 package com.github.backendpart.web.controller;
 
-import com.github.backendpart.repository.UserCartRepository;
-import com.github.backendpart.repository.UserInfoRepository;
 import com.github.backendpart.service.OrderService;
-import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.order.OrderDto;
+import com.github.backendpart.web.dto.order.PayInfoDto;
 import com.github.backendpart.web.dto.order.OrderProductListDto;
 import com.github.backendpart.web.dto.order.PayOrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,14 +21,14 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     @Operation(summary = "주문하기", description = "장바구니에 담긴 물품들을 주문한다.")
-    @GetMapping("")
-    public List<OrderProductListDto> getOrderlist(){
-        return orderService.getOrderlist();
+    @PostMapping("")
+    public OrderDto orderCart(){
+        return orderService.orderCart();
     }
 
     @Operation(summary = "결제하기", description = "배송정보를 입력하고 결제완료한다")
-    @PostMapping("")
-    public PayOrderDto orderCart(OrderDto orderDto){
-        return orderService.orderCart(orderDto);
+    @PostMapping("/{orderId}")
+    public PayOrderDto payOrder(@PathVariable Long orderId, PayInfoDto payInfoDto){
+        return orderService.payOrder(orderId, payInfoDto);
     }
 }

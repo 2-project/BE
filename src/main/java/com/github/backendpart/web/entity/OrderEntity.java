@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
+@Setter
 @Table(name = "order_table")
 public class OrderEntity extends TimeEntity{
 
@@ -21,11 +22,6 @@ public class OrderEntity extends TimeEntity{
         @Column(name = "order_cid")
         @Schema(description = "주문 번호", example = "1")
         private Long orderCid;
-
-        @ManyToOne
-        @JoinColumn(name = "user_cart_cid")
-        @Schema(description = "유저의 장바구니")
-        private UserCartEntity userCart;
 
         @Column(name = "order_status")
         @Schema(description = "주문 상태", example = "주문 완료")
@@ -43,4 +39,7 @@ public class OrderEntity extends TimeEntity{
         @Schema(description = "수령인 전화번호", example = "010-1234-5678")
         private String phoneNum;
 
+        public OrderEntity(Object orderCid, String orderStatus) {
+                this.orderStatus = orderStatus;
+        }
 }
