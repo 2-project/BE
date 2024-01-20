@@ -2,6 +2,8 @@ package com.github.backendpart.web.controller;
 
 import com.github.backendpart.service.ProductService;
 import com.github.backendpart.web.dto.product.ProductDto;
+import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
+import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
@@ -21,21 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-    @GetMapping("productDetail/{productId}")
+    @GetMapping("/productDetail/{productId}")
     @Operation(summary = "상품 상세 조회")
-    public ResponseEntity<ProductDto> getProductDetail(@PathVariable long productId){
+    public ResponseEntity<GetProductDetailResponseDto> getProductDetail(@PathVariable(name = "productId") Long productId){
         log.info("GET 상세 조회 요청이 들어왔습니다");
-        ProductDto productDto = productService.findById(productId);
-        log.info("GET 상세 조회 요청 응답 값 = "+productDto);
+        GetProductDetailResponseDto productDto = productService.findById(productId);
+        log.info("GET 상세 조회 요청 응답 값 = " + productDto);
         return ResponseEntity.ok().body(productDto);
     }
 
     @GetMapping("")
     @Operation(summary = "상품 카테고리별 조회")
-    public ResponseEntity<List<ProductDto>> getProduct(@RequestParam String categoryName){
+    public ResponseEntity<List<GetProductResponseDto>> getProduct(@RequestParam(name="categoryName") String categoryName){
         log.info("GET 상품 카테고리별 조회 요청이 들어왔습니다");
-        List<ProductDto> categoryProducts = new ArrayList<>();
-        //TODO 기능구현 해야함
+        List<GetProductResponseDto> categoryProducts = productService.findByCategory(categoryName);
+
         log.info("GET 상품 카테고리별 조회 응답 값 = " + categoryProducts);
         return ResponseEntity.ok().body(categoryProducts);
     }

@@ -7,12 +7,17 @@ import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
 import com.github.backendpart.web.dto.product.OptionDto;
 import com.github.backendpart.web.dto.product.ProductDto;
 import com.github.backendpart.web.dto.product.ProductImageDto;
+import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
+import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
 import com.github.backendpart.web.entity.CategoryEntity;
 import com.github.backendpart.web.entity.ProductEntity;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,21 +30,34 @@ public class ProductService {
     private final ImageUploadService imageUploadService;
     private final OptionService optionService;
     
-    public ProductDto findById(long productId){
+    public GetProductDetailResponseDto findById(Long productId){
         ProductEntity targetProduct = productRepository.findById(productId).orElse(null);
-        ProductDto targetProductDto = ProductDto.toDto(targetProduct);
+        GetProductDetailResponseDto targetProductDto = GetProductDetailResponseDto.toDto(targetProduct);
+
         return targetProductDto;
+    }
+
+    @Transactional
+    public List<GetProductResponseDto> findByCategory(String categoryName){
+        log.info("[GetProduct] 요청이 들어왔습니다");
+        List<ProductEntity> targetProductsEntity = productRepository.findByCategory_CategoryName(categoryName);
+        List<GetProductResponseDto> targetProductsDto = new ArrayList<>();
+
+        if(targetProductsEntity == null){
+            log.info("[GetProduct] 해당 카테고리에 상품이 없습니다");
+        }
+        else {
+            for (ProductEntity productEntity : targetProductsEntity) {
+                System.out.println(productEntity.getProductName());
+                targetProductsDto.add(GetProductResponseDto.toDto(productEntity));
+            }
+        }
+
+        return targetProductsDto;
     }
     
     
     public CommonResponseDto addProduct(AddProductRequestDto addProductRequestDto, List<MultipartFile> images){
-        //TODO
-        // 1. 이미지와 옵션이 비어있는 product를 생성
-        // 2. 생성된 product를 기반으로 product_cid를 받아옴
-        // 3. product_cid와 옵션의 정보를 가지고 옵션을 추가
-        // 4. product_cid와 이미지 정보를 가지고 이미지를 추가
-        // 5. 최종적으로 결과 값 출력
-
         try {
             log.info("[addProduct] 새로운 상품 추가 요청이 들어왔습니다. addProductRequestDto = " + addProductRequestDto);
             // 이미지와 옵션이 비어있는 product 생성
@@ -55,18 +73,16 @@ public class ProductService {
                     .build();
             productRepository.save(newProductEntity);
             log.info("[TEST] newProductEntity = " + newProductEntity);
-            ProductDto newProductDto = ProductDto.toDto(newProductEntity);
-            log.info("[addProduct] 새로운 상품이 추가되었습니다. newProductDto = " + newProductDto);
 
             // 생성된 product에 이미지 추가
             if(images != null) {
-                List<ProductImageDto> uploadedImages = imageUploadService.uploadImages(images, newProductDto);
+                List<ProductImageDto> uploadedImages = imageUploadService.uploadImages(images);
                 log.info("[addProduct] 상품에 이미지가 추가되었습니다. uploadedImages = " + uploadedImages);
             }
 
             // 생성된 product에 option 추가
             if(addProductRequestDto.getOptions() != null){
-                List<OptionDto> addedOptions = optionService.addOption(addProductRequestDto.getOptions(), newProductDto);
+                List<OptionDto> addedOptions = optionService.addOption(addProductRequestDto.getOptions());
                 log.info("[addProduct] 상품에 옵션이 추가되었습니다. addedOptions = " + addedOptions);
             }
 

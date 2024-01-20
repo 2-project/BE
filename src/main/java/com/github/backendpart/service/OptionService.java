@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class OptionService{
     private final OptionRepository optionRepository;
-    public List<OptionDto> addOption(List<OptionRequestDto> options, ProductDto product){
+    public List<OptionDto> addOption(List<OptionRequestDto> options){
         List<OptionDto> addedOption = new ArrayList<>();
 
         for(OptionRequestDto optionDto : options){
@@ -25,12 +25,11 @@ public class OptionService{
             OptionDto newOption = OptionDto.builder()
                     .optionName(optionDto.getOptionName())
                     .optionStock(optionDto.getOptionStock())
-                    .product(product)
                     .build();
 
             log.info("[OptionService] 추가될 newOption = " + newOption);
             addedOption.add(newOption);
-            OptionEntity savedOption = OptionDto.toEntity(newOption);
+            OptionEntity savedOption = OptionEntity.toEntity(newOption);
             optionRepository.save(savedOption);
         }
 

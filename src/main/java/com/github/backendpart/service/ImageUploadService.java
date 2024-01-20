@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.github.backendpart.repository.ProductImageRepository;
-import com.github.backendpart.web.dto.product.ProductDto;
 import com.github.backendpart.web.dto.product.ProductImageDto;
 import com.github.backendpart.web.entity.ProductImageEntity;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +59,7 @@ public class ImageUploadService {
         return amazonS3.getUrl(bucketName, changedName).toString();
     }
 
-    public List<ProductImageDto> uploadImages(List<MultipartFile> productImages, ProductDto product) {
+    public List<ProductImageDto> uploadImages(List<MultipartFile> productImages) {
 
         List<ProductImageDto> uploadedImages = new ArrayList<>();
 
@@ -70,12 +69,11 @@ public class ImageUploadService {
             log.info("[uploadImage] 이미지가 s3업데이트 메서드로 넘어갈 예정입니다. originName = " + originName);
 
             ProductImageDto newProductImage = ProductImageDto.builder()
-                    .product(product)
                     .productImageName(originName)
                     .productImagePath(storedImagedPath)
                     .build();
 
-            ProductImageEntity newProductImageEntity = ProductImageDto.toEntity(newProductImage);
+            ProductImageEntity newProductImageEntity = ProductImageEntity.toEntity(newProductImage);
             productImageRepository.save(newProductImageEntity);
 
             uploadedImages.add(newProductImage);
