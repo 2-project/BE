@@ -92,7 +92,8 @@ public class CartService {
             UserCartEntity usercart = userCartRepository.findUserCartEntityByUser(user);
             boolean isAlreadyInCart = cartRepository.existsCartEntityByProductAndUserCartAndCartStatus(product,usercart,"주문 전");
             if(!isAlreadyInCart){
-                CartEntity cart = new CartEntity(null,usercart,product,option,"주문 전", quantity );
+                CartEntity cart = CartEntity.builder().userCart(usercart).product(product).option(option)
+                        .cartStatus("주문 전").cartQuantity(quantity).build();
                 cartRepository.save(cart);
                 return ResultAddCartDto.builder()
                         .success(true)
@@ -111,7 +112,8 @@ public class CartService {
         }
         else {
             UserCartEntity usercart = UserCartEntity.builder().user(user).build();
-            CartEntity cart = new CartEntity(null, usercart, product, option, "주문 전", quantity);
+            CartEntity cart = CartEntity.builder().userCart(usercart).product(product).option(option)
+                    .cartStatus("주문 전").cartQuantity(quantity).build();
             cartRepository.save(cart);
             return ResultAddCartDto.builder()
                     .success(true)

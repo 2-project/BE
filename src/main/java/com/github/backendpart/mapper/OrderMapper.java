@@ -1,6 +1,5 @@
-package com.github.backendpart.service;
+package com.github.backendpart.mapper;
 
-import com.github.backendpart.web.dto.cart.CartDto;
 import com.github.backendpart.web.dto.order.OrderProductListDto;
 import com.github.backendpart.web.entity.CartEntity;
 import org.mapstruct.Mapper;

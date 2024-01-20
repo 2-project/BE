@@ -1,5 +1,6 @@
 package com.github.backendpart.service;
 
+import com.github.backendpart.mapper.OrderMapper;
 import com.github.backendpart.repository.*;
 import com.github.backendpart.web.dto.order.OrderDto;
 import com.github.backendpart.web.dto.order.PayInfoDto;
@@ -85,13 +86,13 @@ public class OrderService {
         }
 
 
-        // "결제완료"상태 되면 옵션의 재고에서 주문 수량 빼기
+//         "결제완료"상태 되면 옵션의 재고에서 주문 수량 빼기
         List<CartEntity> cartList = cartRepository.findAllByOrder(order);
         List<OptionEntity> optionList = cartList.stream().map(CartEntity::getOption).toList();
 
         for(int i=0;i<optionList.size();i++){
         int remainstock = optionList.get(i).getOptionStock() - cartList.get(i).getCartQuantity();
-        optionList.get(i).setOptionStock(remainstock);
+        optionList.get(i).setOptionStock(remainstock); 
         optionRepository.save(optionList.get(i));
          }
 

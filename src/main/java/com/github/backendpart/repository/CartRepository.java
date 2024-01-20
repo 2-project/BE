@@ -1,6 +1,7 @@
 package com.github.backendpart.repository;
 
 import com.github.backendpart.web.entity.CartEntity;
+import com.github.backendpart.web.entity.OrderEntity;
 import com.github.backendpart.web.entity.ProductEntity;
 import com.github.backendpart.web.entity.UserCartEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,6 @@ public interface CartRepository extends JpaRepository<CartEntity,Long> {
     CartEntity findByProductAndUserCartAndCartStatus(ProductEntity product, UserCartEntity userCart,String status);
 
     List<CartEntity> findAllByUserCart(UserCartEntity userCart);
+
+    List<CartEntity> findAllByOrder(OrderEntity order);
 }
