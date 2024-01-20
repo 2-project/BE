@@ -10,7 +10,9 @@ import com.github.backendpart.web.dto.product.ProductImageDto;
 import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
 import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
 import com.github.backendpart.web.entity.CategoryEntity;
+import com.github.backendpart.web.entity.OptionEntity;
 import com.github.backendpart.web.entity.ProductEntity;
+import com.github.backendpart.web.entity.ProductImageEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class ProductService {
     private final OptionService optionService;
     
     public GetProductDetailResponseDto findById(Long productId){
-        ProductEntity targetProduct = productRepository.findById(productId).orElse(null);
+        ProductEntity targetProduct = productRepository.findByProductCid(productId).orElse(null);
         GetProductDetailResponseDto targetProductDto = GetProductDetailResponseDto.toDto(targetProduct);
 
         return targetProductDto;
@@ -76,13 +78,17 @@ public class ProductService {
 
             // 생성된 product에 이미지 추가
             if(images != null) {
-                List<ProductImageDto> uploadedImages = imageUploadService.uploadImages(images);
+                List<ProductImageEntity> uploadedImages = imageUploadService.uploadImages(images, newProductEntity);
+                newProductEntity.setProductImages(uploadedImages);
+                productRepository.save(newProductEntity);
                 log.info("[addProduct] 상품에 이미지가 추가되었습니다. uploadedImages = " + uploadedImages);
             }
 
             // 생성된 product에 option 추가
             if(addProductRequestDto.getOptions() != null){
-                List<OptionDto> addedOptions = optionService.addOption(addProductRequestDto.getOptions());
+                List<OptionEntity> addedOptions = optionService.addOption(addProductRequestDto.getOptions());
+                newProductEntity.setOptions(addedOptions);
+                productRepository.save(newProductEntity);
                 log.info("[addProduct] 상품에 옵션이 추가되었습니다. addedOptions = " + addedOptions);
             }
 

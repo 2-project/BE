@@ -27,13 +27,5 @@ public class ProductImageEntity extends TimeEntity {
     @Schema(description = "상품 이미지 url", example = "https://qewr.com")
     private String productImagePath;
 
-    public static ProductImageEntity toEntity(ProductImageDto productImageDto){
-
-        return ProductImageEntity.builder()
-                .productImageCid(productImageDto.getProductImageCid())
-                .productImageName(productImageDto.getProductImageName())
-                .productImagePath(productImageDto.getProductImagePath())
-                .build();
-    }
 
 }

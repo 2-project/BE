@@ -16,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "product_table")
 @AllArgsConstructor
@@ -64,28 +65,5 @@ public class ProductEntity extends TimeEntity {
     @JoinColumn(name = "category_cid", referencedColumnName = "category_cid")
     @Schema(description = "상품 카테고리", example = "인기상품")
     private CategoryEntity category;
-//
-//    public static ProductEntity toEntity(AddProductRequestDto addProductRequestDto){
-//        List<OptionEntity> optionEntityList = new ArrayList<>();
-//
-//        if (addProductRequestDto.getOptions() != null) {
-//            for (OptionRequestDto option : addProductRequestDto.getOptions()) {
-//                OptionEntity optionEntity = OptionEntity.toEntity(option);
-//                optionEntityList.add(optionEntity);
-//            }
-//        }
-//
-//        return ProductEntity.builder()
-//                //.productCid(addProductRequestDto.getProductCid())
-//                .productName(addProductRequestDto.getProductName())
-//                .productDescription(addProductRequestDto.getProductDescription())
-//                .productPrice(addProductRequestDto.getProductPrice())
-//                .productSaleStart(addProductRequestDto.getProductSaleStart())
-//                .productSaleEnd(addProductRequestDto.getProductSaleEnd())
-//                .options(addProductRequestDto.getOptions() == null ? null : optionEntityList)
-//                .category(CategoryEntity.toEntity(addProductRequestDto.getCategory()))
-//                .build();
-//    }
-
 
 }

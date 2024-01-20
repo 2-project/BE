@@ -17,21 +17,22 @@ import java.util.List;
 @Slf4j
 public class OptionService{
     private final OptionRepository optionRepository;
-    public List<OptionDto> addOption(List<OptionRequestDto> options){
-        List<OptionDto> addedOption = new ArrayList<>();
+    public List<OptionEntity> addOption(List<OptionRequestDto> options){
+        List<OptionEntity> addedOption = new ArrayList<>();
 
         for(OptionRequestDto optionDto : options){
             log.info("[OptionService] 옵션추가 진행중인 optionDto = " + optionDto);
-            OptionDto newOption = OptionDto.builder()
+            OptionEntity newOption = OptionEntity.builder()
                     .optionName(optionDto.getOptionName())
                     .optionStock(optionDto.getOptionStock())
                     .build();
 
             log.info("[OptionService] 추가될 newOption = " + newOption);
-            addedOption.add(newOption);
-            OptionEntity savedOption = OptionEntity.toEntity(newOption);
-            optionRepository.save(savedOption);
+            addedOption.add(newOption);;
+            optionRepository.save(newOption);
         }
+
+
 
         return addedOption;
     }

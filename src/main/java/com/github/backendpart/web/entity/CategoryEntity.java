@@ -24,11 +24,4 @@ public class CategoryEntity extends TimeEntity {
     @Schema(description = "카테고리 이름", example = "인기상품")
     private String categoryName;
 
-    public static CategoryEntity toEntity(CategoryDto categoryDto){
-        return CategoryEntity.builder()
-                .categoryCid(categoryDto.getCategoryCid())
-                .categoryName(categoryDto.getCategoryName())
-                .build();
-    }
-
 }
