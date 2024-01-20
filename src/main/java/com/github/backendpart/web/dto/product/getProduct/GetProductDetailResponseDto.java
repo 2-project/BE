@@ -1,5 +1,8 @@
-package com.github.backendpart.web.dto.product;
+package com.github.backendpart.web.dto.product.getProduct;
 
+import com.github.backendpart.web.dto.product.CategoryDto;
+import com.github.backendpart.web.dto.product.OptionDto;
+import com.github.backendpart.web.dto.product.ProductImageDto;
 import com.github.backendpart.web.entity.OptionEntity;
 import com.github.backendpart.web.entity.ProductEntity;
 import com.github.backendpart.web.entity.ProductImageEntity;
@@ -8,7 +11,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -16,9 +18,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@ToString
 @Slf4j
-public class ProductDto {
+@ToString
+public class GetProductDetailResponseDto {
     @Schema(description = "상품 고유 아이디", example = "1")
     private Long productCid;
 
@@ -31,12 +33,6 @@ public class ProductDto {
     @Schema(description = "상품 가격", example = "198000")
     private Integer productPrice;
 
-    @Schema(description = "상품 판매 시작일", example = "1111-11-11")
-    private Date productSaleStart;
-
-    @Schema(description = "상품 판매 종료일", example = "1111-11-11")
-    private Date productSaleEnd;
-
     @Schema(description = "상품 옵션")
     private List<OptionDto> options;
 
@@ -45,8 +41,8 @@ public class ProductDto {
     @Schema(description = "상품 카테고리", example = "인기상품")
     private CategoryDto category;
 
-    public static ProductDto toDto(ProductEntity productEntity){
-        log.info("[toDto] 실행되고 있습니다.");
+    public static GetProductDetailResponseDto toDto(ProductEntity productEntity) {
+        log.info("[GetProductDetailResponseDto/toDto] 실행되고 있습니다.");
         List<OptionDto> optionDtoList = new ArrayList<>();
         if (productEntity.getOptions() != null) {
             for (OptionEntity option : productEntity.getOptions()) {
@@ -64,16 +60,16 @@ public class ProductDto {
         }
 
 
-        return ProductDto.builder()
+        return GetProductDetailResponseDto.builder()
                 .productCid(productEntity.getProductCid())
                 .productName(productEntity.getProductName())
                 .productDescription(productEntity.getProductDescription())
                 .productPrice(productEntity.getProductPrice())
-                .productSaleStart(productEntity.getProductSaleStart())
-                .productSaleEnd(productEntity.getProductSaleEnd())
                 .options(productEntity.getOptions() == null ? null : optionDtoList)
                 .productImages(productEntity.getProductImages() == null ? null : productImageDtoList)
                 .category(CategoryDto.toDto(productEntity.getCategory()))
                 .build();
     }
+
 }
+

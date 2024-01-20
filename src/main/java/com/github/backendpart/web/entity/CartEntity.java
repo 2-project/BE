@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Entity
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Table(name = "cart_table")
+@AllArgsConstructor
+@Builder
 public class CartEntity extends TimeEntity {
 
         @Id
