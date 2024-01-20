@@ -21,4 +21,10 @@ public class CartDto {
     private int quantity;
     @Schema(description = "물품 가격",nullable = false,example = "15000")
     private int price;
+    @Schema(description = "물품 대표사진",nullable = false,example = "주황버섯.png")
+    private String imagename;
+    @Schema(description = "물품 이미지주소",nullable = false,example = "https://qewr.com")
+    private String imageAddress;
+    @Schema(description = "물품 상세설명",nullable = false,example = "주황버섯입니다.")
+    private String productDescription;
 }
