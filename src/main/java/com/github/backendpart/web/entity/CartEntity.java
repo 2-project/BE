@@ -2,14 +2,18 @@ package com.github.backendpart.web.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.*;
 
 import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "cart_table")
 @Setter
+@Table(name = "cart_table")
 @AllArgsConstructor
 @Builder
 public class CartEntity extends TimeEntity {
@@ -42,4 +46,9 @@ public class CartEntity extends TimeEntity {
         @Column(name = "cart_quantity")
         @Schema(description = "장바구니 물품 수량", example = "5")
         private Integer cartQuantity;
+
+        @ManyToOne
+        @JoinColumn(name = "order_cid", referencedColumnName = "order_cid",nullable = true)
+        @Schema(description = "주문 번호")
+        private OrderEntity order;
     }
