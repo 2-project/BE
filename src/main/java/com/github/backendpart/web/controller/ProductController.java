@@ -75,7 +75,7 @@ public class ProductController {
     }
 
     @PutMapping("/editOption")
-    @Operation(summary = "상품 옵션별 재고 수정")
+    @Operation(summary = "상품 옵션별 재고 수정", description = "여러개의 옵션값도 동시에 수정 가능합니다.")
     public ResponseEntity<CommonResponseDto> editOptionStock(
             @RequestBody List<EditProductRequestDto> editProductRequestDtoList
     ){
@@ -87,12 +87,14 @@ public class ProductController {
     }
 
 
+    // exceptionHandler
+
     @ExceptionHandler(NotFoundException.class)
     ResponseEntity<CommonResponseDto> notFoundExceptionHandler(NotFoundException e){
         return ResponseEntity.ok().body(CommonResponseDto.builder()
-                .code(e.getStatusCode())
+                .code(404)
                 .success(false)
-                .message(e.getMessage())
+                .message(e.getErrorMessage())
                 .build());
     }
 }
