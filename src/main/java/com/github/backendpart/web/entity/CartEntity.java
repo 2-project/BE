@@ -2,15 +2,16 @@ package com.github.backendpart.web.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cart_table")
+@Setter
+@AllArgsConstructor
+@Builder
 public class CartEntity extends TimeEntity {
 
         @Id

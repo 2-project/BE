@@ -24,4 +24,11 @@ public class CategoryDto {
                 .build();
     }
 
+    public static CategoryEntity toEntity(CategoryDto categoryDto){
+        return CategoryEntity.builder()
+                .categoryCid(categoryDto.getCategoryCid())
+                .categoryName(categoryDto.getCategoryName())
+                .build();
+    }
+
 }

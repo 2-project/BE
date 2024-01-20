@@ -19,8 +19,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "product_table")
-@AllArgsConstructor
-@Builder
 public class ProductEntity extends TimeEntity {
 
     @Id
