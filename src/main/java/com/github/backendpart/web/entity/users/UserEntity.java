@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users_table")
@@ -63,11 +64,11 @@ public class UserEntity extends TimeEntity {
 
     public void updateRole(Roles role) {
         if(this.roles == null) {
-          this.roles = null;
+          this.roles = role;
         }
 
         else if(this.roles.getType() != null) {
-          this.roles = role;
+          this.roles = null;
         }
     }
 }
