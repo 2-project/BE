@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Service
@@ -22,7 +23,6 @@ public class OrderService {
     private final UserInfoRepository userInfoRepository;
     private final UserCartRepository userCartRepository;
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
     private final OrderRepository orderRepository;
 
@@ -32,7 +32,8 @@ public class OrderService {
         // 1. 토큰에서 유저정보 빼오기
 //        Long userId = 토큰.getUserId;
         Long userId = 1l;
-        UserEntity user = userInfoRepository.findById(userId).orElseThrow();
+        UserEntity user = userInfoRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.: " + userId));
+
         List<CartEntity> cartList = userCartRepository.findUserCartEntityByUser(user).getCartList();
         // 2. "주문 완료"된 장바구니는 포함시키지 않아야함
         List<CartEntity> NowCartList = cartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
@@ -66,8 +67,8 @@ public class OrderService {
 
 
     public PayOrderDto payOrder(Long orderId, PayInfoDto payInfoDto) {
-
-        OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+    try {
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("해당 주문내역을 찾을 수 없습니다.: " + orderId));
 
         order.setOrderStatus("결제완료");
         order.setRecipient(payInfoDto.getRecipientName());
@@ -76,27 +77,28 @@ public class OrderService {
 
         orderRepository.save(order);
 
-
-
         // orderdto에서 해당 배송지를 기본배송지로 등록 true했다면, 유저의 배송지 바꾸기
-        if(payInfoDto.isDefaultAddress()){
+        if (payInfoDto.isDefaultAddress()) {
             Long userId = 1l;
             UserEntity user = userInfoRepository.findById(userId).orElseThrow();
             user.setUserAddress(payInfoDto.getAddress());
         }
 
-
-//         "결제완료"상태 되면 옵션의 재고에서 주문 수량 빼기
+//      "결제완료"상태 되면 옵션의 재고에서 주문 수량 빼기
         List<CartEntity> cartList = cartRepository.findAllByOrder(order);
         List<OptionEntity> optionList = cartList.stream().map(CartEntity::getOption).toList();
 
-        for(int i=0;i<optionList.size();i++){
-        int remainstock = optionList.get(i).getOptionStock() - cartList.get(i).getCartQuantity();
-        optionList.get(i).setOptionStock(remainstock); 
-        optionRepository.save(optionList.get(i));
-         }
+        for (int i = 0; i < optionList.size(); i++) {
+            int remainstock = optionList.get(i).getOptionStock() - cartList.get(i).getCartQuantity();
+            optionList.get(i).setOptionStock(remainstock);
+            optionRepository.save(optionList.get(i));
+        }
 
         return PayOrderDto.builder().code(200).success(true).message("결제 완료되었습니다!").build();
+    }
+    catch (Exception e){
+        return PayOrderDto.builder().code(400).success(false).message("결제 실패하였습니다!").build();
+    }
     }
 }
 

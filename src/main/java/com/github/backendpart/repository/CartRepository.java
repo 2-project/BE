@@ -22,4 +22,6 @@ public interface CartRepository extends JpaRepository<CartEntity,Long> {
     List<CartEntity> findAllByUserCart(UserCartEntity userCart);
 
     List<CartEntity> findAllByOrder(OrderEntity order);
+
+    CartEntity findByProduct(ProductEntity product);
 }
