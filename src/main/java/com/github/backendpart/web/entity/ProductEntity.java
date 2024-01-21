@@ -49,11 +49,11 @@ public class ProductEntity extends TimeEntity {
     @Schema(description = "상품 판매 종료일", example = "1111-11-11")
     private Date productSaleEnd;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @Schema(description = "상품 옵션")
     private List<OptionEntity> options;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<ProductImageEntity> productImages;
 
     @ManyToOne

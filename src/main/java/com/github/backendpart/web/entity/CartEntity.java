@@ -34,7 +34,7 @@ public class CartEntity extends TimeEntity {
         @Schema(description = "물품")
         private ProductEntity product;
 
-        @ManyToOne
+        @ManyToOne(cascade = CascadeType.PERSIST)
         @JoinColumn(name = "option_cid", referencedColumnName = "option_cid")
         @Schema(description = "물품 옵션")
         private OptionEntity option;
