@@ -38,9 +38,9 @@ public class JwtTokenProvider {
     // accessToken과 refreshToken을 생성함
     // @param subject
     // @return TokenDto
-    public TokenDto createTokenDto(String userId, List<Roles> roles){
+    public TokenDto createTokenDto(String userId, Roles roles){
         //권한을 하나의 String으로 합침
-        String authority = roles.stream().map(Roles::getType).collect(Collectors.joining(","));
+        String authority = roles.getType().toString();
 
         //토큰 생성시간
         Instant now = Instant.from(OffsetDateTime.now());
