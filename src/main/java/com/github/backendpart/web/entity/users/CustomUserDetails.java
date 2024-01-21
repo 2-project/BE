@@ -2,6 +2,7 @@ package com.github.backendpart.web.entity.users;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
       Collection<GrantedAuthority> collection = new ArrayList<>();
-      collection.add((GrantedAuthority) () -> user.getRoles().toString());
+      collection.add(new SimpleGrantedAuthority(user.getRoles().toString()));
       return collection;
     }
 

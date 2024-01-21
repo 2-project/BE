@@ -45,7 +45,7 @@ public class UsersService implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(UserEntity users){
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(users.getRoles().stream().map(Roles::getType).collect(Collectors.joining(",")));
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(users.getRoles().getType().toString());
 
         return new User(
                 users.getUserId(),
