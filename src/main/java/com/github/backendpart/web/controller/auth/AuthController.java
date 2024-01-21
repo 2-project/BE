@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "접속관련 api", description = "유저 접속 관련")
 public class AuthController {
@@ -27,16 +28,16 @@ public class AuthController {
     private final TokenService tokenService;
 
     @Operation(summary = "회원가입 요청", description = "회원가입을 한다.")
-    @PostMapping("/users/signup")
+    @PostMapping("/signup")
     public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto){
         log.info("signup controller 진입");
         requestUserDto.setUserPwd(passwordEncoder.encode(requestUserDto.getUserPwd()));
         usersService.signup(requestUserDto);
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.OK);
     }
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 한다.")
-    @PostMapping("/users/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseTokenDto> userLogin(@RequestBody RequestLoginDto requestLoginDto) {
       log.info("login controller 진입");
       TokenDto tokenDTO = usersService.login(requestLoginDto);

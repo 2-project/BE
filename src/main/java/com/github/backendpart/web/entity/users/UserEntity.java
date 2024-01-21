@@ -41,13 +41,13 @@ public class UserEntity extends TimeEntity {
     private ProfileImageEntity profileImage;
 
     @Enumerated(EnumType.STRING)
-    private List<Roles> roles;
+    private Roles roles;
 
     @Column(name = "is_deleted", length = 20)
     private String isDeleted;
 
     @Builder
-    public UserEntity(String userId, String userPwd, String userName, String userPhone, String userAddress, List<Roles> roles, String isDeleted){
+    public UserEntity(String userId, String userPwd, String userName, String userPhone, String userAddress, Roles roles, String isDeleted){
         this.userId = userId;
         this.userPwd = userPwd;
         this.userName = userName;
@@ -63,14 +63,11 @@ public class UserEntity extends TimeEntity {
 
     public void updateRole(Roles role) {
         if(this.roles == null) {
-          this.roles = new ArrayList<>();
+          this.roles = null;
         }
 
-        if(this.roles.contains(role)) {
-          this.roles.remove(role);
-        }
-        else {
-          this.roles.add(role);
+        else if(this.roles.getType() != null) {
+          this.roles = role;
         }
     }
 }

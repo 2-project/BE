@@ -9,13 +9,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -26,17 +31,40 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+    // 인증은 필요없는 api
     private final String[] PERMIT_URL = {
-            "/users/login",
-            "/users/signup",
+            "/auth/login",
+            "/auth/signup",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/api-docs/**"
+            "/api-docs/**",
+            "/api/product/*"
+    };
+
+    // 인증이 필요한 api
+    private final String[] AUTHENTICATION_URL = {
+            "/api/**"
     };
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
       return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    // cors 세팅
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of("*"));
+//        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addExposedHeader("Authorization");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET","PUT","POST","PATCH","DELETE","OPTIONS"));
+        corsConfiguration.setMaxAge(1000L*60*60);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",corsConfiguration);
+        return source;
     }
 
     @Bean
@@ -47,13 +75,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
           http
-              .csrf(AbstractHttpConfigurer::disable)  //csrf설정 끔
-              .cors(AbstractHttpConfigurer::disable)  //cors설정 끔
+              .csrf((csrf) -> csrf.disable())  //csrf설정 끔
+              .cors((cors) -> cors.disable())  //cors설정 끔
               .sessionManagement((session) ->
                       session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
               )  //세션은 stateless방식
               .formLogin((auth) -> auth.disable())// formLogin 비활성화
-
+              .rememberMe((remember) -> remember.disable())
+              //cors 재설정
+              .cors((cors) -> {
+                  cors.configurationSource(corsConfigurationSource());
+              })
               //예외처리
               .exceptionHandling((exception) ->
                   exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -64,14 +96,18 @@ public class SecurityConfig {
               .authorizeHttpRequests((auth) ->
                   auth
                       .requestMatchers(PERMIT_URL).permitAll()
-                      .requestMatchers("/api/**").authenticated()
-                      .anyRequest()
-                      .authenticated()
+                      .requestMatchers(AUTHENTICATION_URL).authenticated()
               )
+              .logout((logout) -> {
+                  logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"));
+                  logout.logoutSuccessUrl("/auth/login");
+                  logout.invalidateHttpSession(true);
+              })
               //jwt필터를 usernamepassword인증 전에 실행
               .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
       log.info("securityConfig");
       return http.build();
     }
+
 }
