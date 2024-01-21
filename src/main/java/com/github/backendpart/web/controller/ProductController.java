@@ -1,11 +1,12 @@
 package com.github.backendpart.web.controller;
 
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.github.backendpart.service.OptionService;
 import com.github.backendpart.service.ProductService;
-import com.github.backendpart.web.dto.product.ProductDto;
+import com.github.backendpart.web.dto.product.editProduct.EditProductRequestDto;
 import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
 import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.ArrayList;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +27,7 @@ import java.util.List;
 @Tag(name = "상품 관리 API", description = "상품 추가 및 조회를 담당하는 api입니다.")
 public class ProductController {
     private final ProductService productService;
+    private final OptionService optionService;
     @GetMapping("/productDetail/{productId}")
     @Operation(summary = "상품 상세 조회")
     public ResponseEntity<GetProductDetailResponseDto> getProductDetail(@PathVariable(name = "productId") Long productId){
@@ -71,5 +72,29 @@ public class ProductController {
         log.info("[DELETE] deleteProduct결과 = " + deleteProductResult);
 
         return ResponseEntity.ok().body(deleteProductResult);
+    }
+
+    @PutMapping("/editOption")
+    @Operation(summary = "상품 옵션별 재고 수정", description = "여러개의 옵션값도 동시에 수정 가능합니다.")
+    public ResponseEntity<CommonResponseDto> editOptionStock(
+            @RequestBody List<EditProductRequestDto> editProductRequestDtoList
+    ){
+        log.info("[PUT] 상품 옵션 재고 수량 요청이 들어왔습니다.");
+        CommonResponseDto editProductResult = optionService.editOption(editProductRequestDtoList);
+        log.info("[PUT] editProductResult결과 = " + editProductResult);
+
+        return ResponseEntity.ok().body(editProductResult);
+    }
+
+
+    // exceptionHandler
+
+    @ExceptionHandler(NotFoundException.class)
+    ResponseEntity<CommonResponseDto> notFoundExceptionHandler(NotFoundException e){
+        return ResponseEntity.ok().body(CommonResponseDto.builder()
+                .code(404)
+                .success(false)
+                .message(e.getErrorMessage())
+                .build());
     }
 }

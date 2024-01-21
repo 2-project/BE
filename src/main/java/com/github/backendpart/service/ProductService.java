@@ -1,5 +1,6 @@
 package com.github.backendpart.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.repository.CategoryRepository;
 import com.github.backendpart.repository.ProductRepository;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
@@ -63,7 +64,7 @@ public class ProductService {
         try {
             log.info("[addProduct] 새로운 상품 추가 요청이 들어왔습니다. addProductRequestDto = " + addProductRequestDto);
             // 이미지와 옵션이 비어있는 product 생성
-            CategoryEntity category = categoryRepository.findByCategoryName(addProductRequestDto.getCategory());
+            CategoryEntity category = categoryRepository.findByCategoryName(addProductRequestDto.getCategory()).orElseThrow(()-> new NotFoundException("일치하는 카테고리가 존재하지 않습니다."));
             log.info("[category] 카테고리 결과 " + category.getCategoryName());
             ProductEntity newProductEntity = ProductEntity.builder()
                     .productName(addProductRequestDto.getProductName())

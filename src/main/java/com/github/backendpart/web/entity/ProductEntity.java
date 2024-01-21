@@ -29,11 +29,6 @@ public class ProductEntity extends TimeEntity {
     @Schema(description = "상품 고유 아이디", example = "1")
     private Long productCid;
 
-    @ManyToOne
-    @JoinColumn(name = "user_cid", referencedColumnName = "user_cid")
-    @Schema(description = "상품등록 유저 정보")
-    private UserEntity user;
-
     @Column(name = "product_name")
     @Schema(description = "상품 이름", example = "상품 A")
     private String productName;
