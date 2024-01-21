@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Entity
 @Table(name = "users_table")
 public class UserEntity extends TimeEntity {
@@ -44,8 +41,33 @@ public class UserEntity extends TimeEntity {
     private ProfileImageEntity profileImage;
 
     @Enumerated(EnumType.STRING)
-    private List<Roles> roles;
+    private Roles roles;
 
     @Column(name = "is_deleted", length = 20)
     private String isDeleted;
+
+    @Builder
+    public UserEntity(String userId, String userPwd, String userName, String userPhone, String userAddress, Roles roles, String isDeleted){
+        this.userId = userId;
+        this.userPwd = userPwd;
+        this.userName = userName;
+        this.userPhone = userPhone;
+        this.userAddress = userAddress;
+        this.roles = roles;
+        this.isDeleted = isDeleted;
+    }
+
+    public void updateProfileImage(ProfileImageEntity profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void updateRole(Roles role) {
+        if(this.roles == null) {
+          this.roles = null;
+        }
+
+        else if(this.roles.getType() != null) {
+          this.roles = role;
+        }
+    }
 }
