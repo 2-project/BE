@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,13 +45,13 @@ public class AuthService {
 
       // 1. ID(email)/PW 기반으로 AuthenticationToken 생성
       UsernamePasswordAuthenticationToken authenticationToken = requestDTO.toAuthentication();
-
       // 2. 실제 검증 로직(사용자 비밀번호 체크)
       // authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행됨
       Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
       // 3. 인증 정보를 기반으로 JWT토큰 생성
       TokenDto tokenDto = jwtTokenProvider.createTokenDto(authentication);
+
       // 4. RefreshToken 저장
       RefreshToken refreshToken = RefreshToken.builder()
               .key(authentication.getName())

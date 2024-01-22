@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key encodeKey;
-    private static final String AUTHORITIES_KEY = "auth";
+    private static final String AUTHORITIES_KEY = "roles";
     private static final String BEARER_TYPE = "Bearer";
     private static final Long ACCESS_TOKEN_EXPIRED_TIME = 30 * 60 * 1000L;   //30분
     private static final Long REFRESH_TOKEN_EXPIRED_TIME = 7 * 24 * 60 * 60 * 1000L;  //7일
@@ -51,15 +51,15 @@ public class JwtTokenProvider {
         //accessToken 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("roles", roles)
+                .claim(AUTHORITIES_KEY, roles)
                 .setExpiration(Date.from(now.plusMillis(ACCESS_TOKEN_EXPIRED_TIME)))
-                .signWith(encodeKey, SignatureAlgorithm.ES512)
+                .signWith(encodeKey, SignatureAlgorithm.HS256)
                 .compact();
 
         //refreshToken 생성
         String refreshToken = Jwts.builder()
                 .setExpiration(Date.from(now.plusMillis(REFRESH_TOKEN_EXPIRED_TIME)))
-                .signWith(encodeKey, SignatureAlgorithm.ES512)
+                .signWith(encodeKey, SignatureAlgorithm.HS256)
                 .compact();
 
         //TokenDTO에 두 토큰을 담아서 반환

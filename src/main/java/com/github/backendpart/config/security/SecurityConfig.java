@@ -1,5 +1,6 @@
 package com.github.backendpart.config.security;
 
+import org.springframework.http.HttpMethod;
 import com.github.backendpart.config.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,6 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs/**",
-            "/api/product/**",
             "/v3/**"
     };
 
@@ -57,7 +57,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("*"));
-//        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowCredentials(true);
         corsConfiguration.addExposedHeader("Authorization");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","PUT","POST","PATCH","DELETE","OPTIONS"));
@@ -96,8 +96,10 @@ public class SecurityConfig {
                //인증 진행할 uri설정
               .authorizeHttpRequests((auth) ->
                   auth
-                      .requestMatchers(PERMIT_URL).permitAll()
-                      .requestMatchers(AUTHENTICATION_URL).authenticated()
+                          .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+                          .requestMatchers(PERMIT_URL).permitAll()
+                          .requestMatchers(AUTHENTICATION_URL).authenticated()
+                          .anyRequest().hasRole("ADMIN")
               )
               .logout((logout) -> {
                   logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"));
