@@ -26,7 +26,7 @@ public class ProductService {
 
     public GetProductDetailResponseDto findById(Long productId){
         ProductEntity targetProduct = productRepository.findByProductCid(productId)
-                .orElseThrow(() -> new NoSuchElementException("해당 Product가 없습니다"));
+                .orElseThrow(() -> new NoSuchElementException("해당 Product가 없습니다 : " + productId));
 
         //판매기간만 조회 가능하도록
         if(targetProduct.isSellable()) {
@@ -40,7 +40,7 @@ public class ProductService {
         log.info("[GetProduct] findByCategory 요청이 들어왔습니다");
         //카테고리 이름이 없는 경우
         CategoryEntity category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(()->new NoSuchElementException("해당 카테고리가 없습니다"));
+                .orElseThrow(()->new NoSuchElementException("해당 카테고리가 없습니다 : " + categoryName));
 
         //카테고리 이름 일치하는 칼럼 조회
         List<ProductEntity> targetProductsEntitys = productRepository.findByCategory_CategoryName(categoryName);
@@ -59,18 +59,21 @@ public class ProductService {
             }
         }
 
+
         if(responseProductDtos.isEmpty()) {
-            log.info("[GetProduct] 해당 카테고리에 상품이 없습니다");
-            return GetProductByCategoryReponseDto.builder()
-                    .success(false)
-                    .code(404)
-                    .message("조회할 상품이 존재하지 않습니다.")
-                    .build();
+            log.info("[GetProduct] 해당 카테고리에 상품이 없습니다 : "+categoryName);
+            throw new NoSuchElementException();
+//            return GetProductByCategoryReponseDto.builder()
+//                    .success(false)
+//                    .code(404)
+//                    .message("조회할 상품이 존재하지 않습니다.")
+//                    .build();
         }else{
             return GetProductByCategoryReponseDto.builder()
                     .success(true)
                     .code(200)
                     .message(categoryName+"상품을 조회하였습니다")
+                    .productList(responseProductDtos)
                     .build();
         }
     }
