@@ -1,14 +1,13 @@
-package com.github.backendpart.web.controller;
+package com.github.backendpart.web.controller.product;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.service.OptionService;
-import com.github.backendpart.service.ProductService;
-import com.github.backendpart.web.dto.product.editProduct.EditProductRequestDto;
-import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
-import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
-import io.swagger.v3.oas.annotations.Operation;
+import com.github.backendpart.service.product.AdminProductService;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
+import com.github.backendpart.web.dto.product.adminGetProduct.AdminGetProductResponseDto;
+import com.github.backendpart.web.dto.product.editProduct.EditProductRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,44 +17,26 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/product")
-@Slf4j
 @RequiredArgsConstructor
-@Tag(name = "상품 관리 API", description = "상품 추가 및 조회를 담당하는 api입니다.")
-public class ProductController {
-    private final ProductService productService;
+@Slf4j
+@RequestMapping("/api/admin/product")
+@Tag(name = "관리자 상품 관리 API", description = "관리자가 상품을 관리하는데 사용되는 api입니다. 관리자 권한이 있는 유저만 접근이 가능합니다.")
+public class AdminProductController {
+    private final AdminProductService adminProductService;
     private final OptionService optionService;
-    @GetMapping("/productDetail/{productId}")
-    @Operation(summary = "상품 상세 조회")
-    public ResponseEntity<GetProductDetailResponseDto> getProductDetail(@PathVariable(name = "productId") Long productId){
-        log.info("GET 상세 조회 요청이 들어왔습니다");
-        GetProductDetailResponseDto productDto = productService.findById(productId);
-        log.info("GET 상세 조회 요청 응답 값 = " + productDto);
-        return ResponseEntity.ok().body(productDto);
-    }
-
-    @GetMapping("")
-    @Operation(summary = "상품 카테고리별 조회")
-    public ResponseEntity<List<GetProductResponseDto>> getProduct(@RequestParam(name="categoryName") String categoryName){
-        log.info("GET 상품 카테고리별 조회 요청이 들어왔습니다");
-        List<GetProductResponseDto> categoryProducts = productService.findByCategory(categoryName);
-
-        log.info("GET 상품 카테고리별 조회 응답 값 = " + categoryProducts);
-        return ResponseEntity.ok().body(categoryProducts);
-    }
-
 
     @PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "상품 추가 요청", description = "스웨거에서 테스트를 진행할 떄에는 productInfo도 json파일로 생성해서 테스트 진행해 주셔야합니다.")
     public ResponseEntity<CommonResponseDto> addProduct(
             @RequestPart(name = "productInfo") @Parameter(schema =@Schema(type = "string", format = "binary")) AddProductRequestDto addProductRequestDto,
             @RequestPart(name = "productImages", required = false) List<MultipartFile> productImages
-            ){
+    ){
         log.info("[POST](productController) 새로운 상품 추가 요청이 들어왔습니다. product = " + addProductRequestDto);
-        CommonResponseDto addProductResult = productService.addProduct(addProductRequestDto, productImages);
+        CommonResponseDto addProductResult = adminProductService.addProduct(addProductRequestDto, productImages);
         log.info(("[POST] addProduct결과 = " + addProductResult));
 
         return ResponseEntity.ok().body(addProductResult);
@@ -68,7 +49,7 @@ public class ProductController {
             @RequestBody List<Long> productCidList
     ){
         log.info("[DELETE] 상품 삭제 요청이 들어왔습니다.");
-        CommonResponseDto deleteProductResult = productService.deleteProduct(productCidList);
+        CommonResponseDto deleteProductResult = adminProductService.deleteProduct(productCidList);
         log.info("[DELETE] deleteProduct결과 = " + deleteProductResult);
 
         return ResponseEntity.ok().body(deleteProductResult);
@@ -84,6 +65,16 @@ public class ProductController {
         log.info("[PUT] editProductResult결과 = " + editProductResult);
 
         return ResponseEntity.ok().body(editProductResult);
+    }
+
+    @GetMapping("/getAllProduct")
+    @Operation(summary = "전체 상품 조회", description = "판매기간이 아닌 상품까지 모두 조회합니다.")
+    public ResponseEntity<AdminGetProductResponseDto> getAllProduct(){
+        log.info("[ADMIN] 전체 상품 조회 요청이 들어왔습니다.");
+        AdminGetProductResponseDto getProductResult = adminProductService.getAllProduct();
+        log.info("[ADMIN] 전체 조회 요청 결과 = " + getProductResult);
+
+        return ResponseEntity.ok().body(getProductResult);
     }
 
 
