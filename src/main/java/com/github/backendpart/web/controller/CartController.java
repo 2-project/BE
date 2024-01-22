@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/cart")
-@Tag(name="Cart",description = "Cart API Document")
+@Tag(name="장바구니 API",description = "장바구니 추가,조회,수정,삭제를 담당하는 API입니다.")
 public class CartController {
 
 
