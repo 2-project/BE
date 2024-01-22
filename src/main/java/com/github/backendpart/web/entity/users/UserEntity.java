@@ -48,27 +48,13 @@ public class UserEntity extends TimeEntity {
     private String isDeleted;
 
     @Builder
-    public UserEntity(String userId, String userPwd, String userName, String userPhone, String userAddress, Roles roles, String isDeleted){
+    public UserEntity(String userId, String userPwd, String userName, String userPhone, String userAddress, String isDeleted){
         this.userId = userId;
         this.userPwd = userPwd;
         this.userName = userName;
         this.userPhone = userPhone;
         this.userAddress = userAddress;
-        this.roles = roles;
+        this.roles = Roles.ROLE_USER;
         this.isDeleted = isDeleted;
-    }
-
-    public void updateProfileImage(ProfileImageEntity profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public void updateRole(Roles role) {
-        if(this.roles == null) {
-          this.roles = role;
-        }
-
-        else if(this.roles.getType() != null) {
-          this.roles = null;
-        }
     }
 }

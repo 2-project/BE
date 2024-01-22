@@ -12,7 +12,5 @@ public interface AuthRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUserId(String userId);
 
-    @Query("select m from UserEntity m left join fetch m.profileImage where m.userId = :userId")
-    Optional<UserEntity> findByUserIdEagerLoadImage(String userId);
     boolean existsByUserId(String userId);
 }
