@@ -57,4 +57,5 @@ public class UserEntity extends TimeEntity {
         this.roles = Roles.ROLE_USER;
         this.isDeleted = isDeleted;
     }
+
 }

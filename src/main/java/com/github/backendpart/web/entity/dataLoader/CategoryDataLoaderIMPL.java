@@ -1,6 +1,7 @@
-package com.github.backendpart.web.entity;
+package com.github.backendpart.web.entity.dataLoader;
 
 import com.github.backendpart.repository.CategoryRepository;
+import com.github.backendpart.web.entity.CategoryEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
