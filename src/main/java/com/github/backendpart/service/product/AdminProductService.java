@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -126,8 +128,8 @@ public class AdminProductService {
                         .productCid(product.getProductCid())
                         .productName(product.getProductName())
                         .productPrice(product.getProductPrice())
-                        .productSaleStart(product.getProductSaleStart())
-                        .productSaleEnd(product.getProductSaleEnd())
+                        .productSaleStart(toSimpleDate(product.getProductSaleStart()))
+                        .productSaleEnd(toSimpleDate(product.getProductSaleEnd()))
                         .options(optionList)
                         .category(product.getCategory().getCategoryName())
                         .build();
@@ -149,4 +151,11 @@ public class AdminProductService {
                     .build();
         }
     }
+
+    // simpleDate 타입 변환 로직
+    public String toSimpleDate(Date date){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(date);
+    }
+
 }

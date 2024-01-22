@@ -28,10 +28,10 @@ public class AdminGetProductDetailDto {
     private Integer productPrice;
 
     @Schema(description = "상품 판매 시작일", example = "1111-11-11")
-    private Date productSaleStart;
+    private String productSaleStart;
 
     @Schema(description = "상품 판매 종료일", example = "1111-11-11")
-    private Date productSaleEnd;
+    private String productSaleEnd;
 
     @Schema(description = "상품 옵션")
     private List<OptionDto> options;
