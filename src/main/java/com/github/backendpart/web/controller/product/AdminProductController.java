@@ -3,9 +3,9 @@ package com.github.backendpart.web.controller.product;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.service.OptionService;
 import com.github.backendpart.service.product.AdminProductService;
-import com.github.backendpart.service.product.ProductService;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
+import com.github.backendpart.web.dto.product.adminGetProduct.AdminGetProductResponseDto;
 import com.github.backendpart.web.dto.product.editProduct.EditProductRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/admin/product")
-@Tag(name = "관리자 상품 관리 API", description = "관리자가 상품을 관리하는데 사용되는 api입니다.")
+@Tag(name = "관리자 상품 관리 API", description = "관리자가 상품을 관리하는데 사용되는 api입니다. 관리자 권한이 있는 유저만 접근이 가능합니다.")
 public class AdminProductController {
     private final AdminProductService adminProductService;
     private final OptionService optionService;
@@ -65,6 +65,16 @@ public class AdminProductController {
         log.info("[PUT] editProductResult결과 = " + editProductResult);
 
         return ResponseEntity.ok().body(editProductResult);
+    }
+
+    @GetMapping("/getAllProduct")
+    @Operation(summary = "전체 상품 조회", description = "판매기간이 아닌 상품까지 모두 조회합니다.")
+    public ResponseEntity<AdminGetProductResponseDto> getAllProduct(){
+        log.info("[ADMIN] 전체 상품 조회 요청이 들어왔습니다.");
+        AdminGetProductResponseDto getProductResult = adminProductService.getAllProduct();
+        log.info("[ADMIN] 전체 조회 요청 결과 = " + getProductResult);
+
+        return ResponseEntity.ok().body(getProductResult);
     }
 
 

@@ -39,7 +39,13 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs/**",
+            "/api/product/**",
             "/v3/**"
+    };
+
+    // 관리자 권한이 필요한 api
+    private final String[] ADMIN_URL = {
+            "api/admin/**"
     };
 
     // 인증이 필요한 api
@@ -96,8 +102,8 @@ public class SecurityConfig {
                //인증 진행할 uri설정
               .authorizeHttpRequests((auth) ->
                   auth
-                          .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                           .requestMatchers(PERMIT_URL).permitAll()
+                          .requestMatchers(ADMIN_URL).hasRole("ADMIN")
                           .requestMatchers(AUTHENTICATION_URL).authenticated()
                           .anyRequest().hasRole("ADMIN")
               )
