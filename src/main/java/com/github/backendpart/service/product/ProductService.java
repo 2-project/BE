@@ -1,8 +1,11 @@
 package com.github.backendpart.service.product;
 
+import com.github.backendpart.repository.CategoryRepository;
 import com.github.backendpart.repository.ProductRepository;
 import com.github.backendpart.web.dto.product.getProduct.GetProductDetailResponseDto;
 import com.github.backendpart.web.dto.product.getProduct.GetProductResponseDto;
+import com.github.backendpart.web.entity.CartEntity;
+import com.github.backendpart.web.entity.CategoryEntity;
 import com.github.backendpart.web.entity.ProductEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,15 +14,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     public GetProductDetailResponseDto findById(Long productId){
-        ProductEntity targetProduct = productRepository.findByProductCid(productId).orElseThrow(() -> new IllegalArgumentException("해당 Product가 없습니다"));
+        ProductEntity targetProduct = productRepository.findByProductCid(productId)
+                .orElseThrow(() -> new NoSuchElementException("해당 Product가 없습니다"));
 
         //판매기간만 조회 가능하도록
         if(targetProduct.isSellable()) {
@@ -29,9 +35,10 @@ public class ProductService {
         return null;
     }
 
-    @Transactional
     public List<GetProductResponseDto> findByCategory(String categoryName){
-        log.info("[GetProduct] 요청이 들어왔습니다");
+        log.info("[GetProduct] findByCategory 요청이 들어왔습니다");
+        CategoryEntity category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(()->new NoSuchElementException("해당 카테고리가 없습니다"));
         List<ProductEntity> targetProductsEntity = productRepository.findByCategory_CategoryName(categoryName);
         List<GetProductResponseDto> targetProductsDto = new ArrayList<>();
 
