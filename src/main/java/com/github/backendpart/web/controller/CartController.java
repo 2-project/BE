@@ -27,45 +27,39 @@ public class CartController {
 
     private final CartService cartService;
 
-
-    //장바구니 조회 api (해당 userid에 해당하는 userCart를 가져오기)
     @Operation(summary = "장바구니 조회", description = "장바구니에 담긴 모든 물품을 조회한다")
     @GetMapping("")
-    public List<CartDto> viewCart() { // 토큰 가져와서 findAllCart에 넘겨주기
+    public List<CartDto> viewCart() {
+        // 토큰 가져와서 findAllCart에 넘겨주기
+        log.info("[GET] 장바구니 조회 요청이 들어왔습니다.");
         return cartService.findAllCart();
     }
 
 
-
-
-    //  3.장바구니 담기 api (추가)
-    //실행 ok
     @Operation(summary = "장바구니 추가", description = "장바구니에 새로운 물품을 추가한다.")
-    @PostMapping("/{productid}")
+    @PostMapping("/{productId}")
     public ResultAddCartDto addCart(
-            @PathVariable Long productid,
+            @PathVariable(name ="productId") Long productId,
             @RequestBody AddCartDto addCartDTO) {
-        return cartService.addCart(productid,addCartDTO);
+        log.info("[POST] 장바구니 상품 추가 요청이 들어왔습니다.");
+        return cartService.addCart(productId,addCartDTO);
 
     }
 
-    // 4. 장바구니 삭제 api
-    // 실행 ok
     @Operation(summary = "장바구니 삭제",description = "장바구니 목록에서 특정물품을 삭제한다")
-    @DeleteMapping("/{product_id}")
-    public CommonResponseDto deleteCart(@Parameter(description = "물품 고유 번호") Long productId) {
+    @DeleteMapping("/{productId}")
+    public CommonResponseDto deleteCart(@PathVariable(name ="productId") Long productId) {
+        log.info("[DELETE] 장바구니 물품 삭제 요청이 들어왔습니다.");
         return cartService.deleteCart(productId);
     }
 
-
-    //장바구니 물품 수량 또는 옵션 수정
-    // 실행 ok
     @Operation(summary = "장바구니 수정",description = "장바구니 목록의 특정물품 수량 또는 옵션을 수정한다")
-    @PutMapping("/{productid}") // 또는 cartId
+    @PutMapping("/{productId}") // 또는 cartId
     public CommonResponseDto updateCart(
-            @PathVariable Long productid,
+            @PathVariable(name ="productId") Long productId,
             @RequestBody UpdateCartDTO updateCartDTO){
-        return cartService.updateCart(productid,updateCartDTO);
+        log.info("[PUT] 장바구니 물품 옵션/수량 변경 요청이 들어왔습니다.");
+        return cartService.updateCart(productId,updateCartDTO);
 
     }
 }
