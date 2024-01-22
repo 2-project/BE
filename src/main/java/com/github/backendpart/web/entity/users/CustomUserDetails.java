@@ -4,33 +4,36 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Builder
-@AllArgsConstructor
 @ToString
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private String userId;
-    private String userPwd;
-    private String userAddress;
-    private String userPhone;
-    private Collection<GrantedAuthority> role;
+    private UserEntity user;
 
+    public CustomUserDetails(UserEntity user) {
+      this.user = user;
+    }
+
+    // getAuthorities 반환값으로 Collection 처리
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-      return role;
+      Collection<GrantedAuthority> collections = new ArrayList<>();
+      collections.add(() -> String.valueOf(user.getRoles()));
+      return collections;
     }
 
     @Override
     public String getPassword() {
-      return this.userPwd;
+      return user.getUserPwd();
     }
 
     @Override
     public String getUsername() {
-      return this.userId;
+      return user.getUserId();
     }
 
     /* 계정 만료 여부

@@ -29,30 +29,8 @@ public class UsersService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-      UserEntity user = authRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("userId: " + userId + "를 데이터베이스에서 찾을 수 없습니다."));
-
-      // DB 에 user 값이 존재한다면 userDetails 객체로 만들어서 리턴
-      GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getRoles().toString());
-
-      CustomUserDetails userDetails = CustomUserDetails.builder()
-              .userId(user.getUserId())
-              .userPwd(user.getUserPwd())
-              .userPhone(user.getUserPhone())
-              .userAddress(user.getUserAddress())
-              .role((Collection<GrantedAuthority>) grantedAuthority)
-              .build();
-
-      return userDetails;
-    }
-
-    private UserDetails createUserDetails(UserEntity users){
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(users.getRoles().getType().toString());
-
-        return new User(
-                users.getUserId(),
-                users.getUserPwd(),
-                Collections.singleton(grantedAuthority)
-        );
+        UserEntity user = authRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("userId: " + userId + "를 데이터베이스에서 찾을 수 없습니다."));
+        return new CustomUserDetails(user);
     }
 
     @Transactional(readOnly = true)
