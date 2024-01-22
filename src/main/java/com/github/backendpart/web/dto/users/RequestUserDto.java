@@ -19,5 +19,4 @@ public class RequestUserDto {
     private String userName;
     private String userPhone;
     private String userAddress;
-    private MultipartFile profileImage;
 }

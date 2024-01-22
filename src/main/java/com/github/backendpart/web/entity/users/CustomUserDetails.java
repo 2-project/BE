@@ -1,38 +1,36 @@
 package com.github.backendpart.web.entity.users;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-@Data
+@Builder
+@AllArgsConstructor
+@ToString
+@Getter
 public class CustomUserDetails implements UserDetails {
 
-    private UserEntity user;
-
-  public CustomUserDetails(UserEntity user) {
-    this.user = user;
-  }
+    private String userId;
+    private String userPwd;
+    private String userAddress;
+    private String userPhone;
+    private Collection<GrantedAuthority> role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-      Collection<GrantedAuthority> collection = new ArrayList<>();
-      collection.add(new SimpleGrantedAuthority(user.getRoles().toString()));
-//      collection.add(new SimpleGrantedAuthority("ROLE_" + user.getRoles().toString()));
-      return collection;
+      return role;
     }
 
     @Override
     public String getPassword() {
-      return user.getUserId();
+      return this.userPwd;
     }
 
     @Override
     public String getUsername() {
-      return user.getUserPwd();
+      return this.userId;
     }
 
     /* 계정 만료 여부
@@ -41,7 +39,7 @@ public class CustomUserDetails implements UserDetails {
      */
     @Override
     public boolean isAccountNonExpired() {
-      return false;
+      return true;
     }
 
     /* 계정 잠김 여부
@@ -50,7 +48,7 @@ public class CustomUserDetails implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-      return false;
+      return true;
     }
 
     /* 비밀번호 만료 여부
