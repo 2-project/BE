@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
-@Tag(name="OrderProduct",description = "Order API Document")
+@Tag(name="주문/결제 API",description = "상품 주문 및 결제를 담당하는 API입니다.")
 @Slf4j
 public class OrderController {
     private final OrderService orderService;
