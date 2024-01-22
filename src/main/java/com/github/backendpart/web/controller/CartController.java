@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -29,20 +30,22 @@ public class CartController {
 
     @Operation(summary = "장바구니 조회", description = "장바구니에 담긴 모든 물품을 조회한다")
     @GetMapping("")
-    public List<CartDto> viewCart() {
+    public ResponseEntity<List<CartDto>> viewCart() {
         // 토큰 가져와서 findAllCart에 넘겨주기
         log.info("[GET] 장바구니 조회 요청이 들어왔습니다.");
-        return cartService.findAllCart();
+        List<CartDto> allCart = cartService.findAllCart();
+        return ResponseEntity.ok().body(allCart);
     }
 
 
     @Operation(summary = "장바구니 추가", description = "장바구니에 새로운 물품을 추가한다.")
     @PostMapping("/{productId}")
-    public ResultAddCartDto addCart(
+    public ResponseEntity<ResultAddCartDto> addCart(
             @PathVariable(name ="productId") Long productId,
             @RequestBody AddCartDto addCartDTO) {
         log.info("[POST] 장바구니 상품 추가 요청이 들어왔습니다.");
-        return cartService.addCart(productId,addCartDTO);
+        ResultAddCartDto resultAddCart = cartService.addCart(productId,addCartDTO);
+        return ResponseEntity.ok().body(resultAddCart);
 
     }
 
