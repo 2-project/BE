@@ -50,13 +50,12 @@ public class CartService {
         List<CartEntity> cartList = userCart.getCartList();
         // "주문 완료"된 장바구니는 포함시키지 않아야함
         List<CartEntity> NowUserCartList = cartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
-
+        log.info("[Cart] 주문 전인 장바구니 리스트를 가져왔습니다.");
         List<ProductEntity> productList = NowUserCartList.stream().map(CartEntity::getProduct).toList();
-
         //첫번째 이미지 주소와 이름 빼오기(대표사진)
         List<String> imgAddress = productList.stream().map(product -> product.getProductImages().get(0).getProductImagePath()).toList();
         List<String> imgName = productList.stream().map(product -> product.getProductImages().get(0).getProductImageName()).toList();
-
+        log.info("[product] 현재 장바구니에 담긴 물품들의 정보를 가져왔습니다.");
         // 리스트에서 카트 하나씩 빼와서 mapper로 dto로 바꾸기
         List<CartDto> cartListdto = NowUserCartList.stream().map(CartMapper.INSTANCE::CartEntityToDTO).collect(Collectors.toList());
         for(int i=0;i<cartListdto.size();i++){
@@ -71,6 +70,7 @@ public class CartService {
     public CommonResponseDto deleteCart(Long productId) {
             ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new NoSuchElementException("해당 제품을 찾을 수 없습니다.: " + productId)); //
             cartRepository.deleteByProductAndCartStatus(product, "주문 전");
+            log.info("[deleteCart] 장바구니에 담긴 물품을 삭제했습니다.");
             return CommonResponseDto.builder()
                     .success(true)
                     .code(200)
@@ -90,12 +90,14 @@ public class CartService {
         Long userId = 1L;
         UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: " + userId));
 
-        if (userCartRepository.existsUserCartEntityByUser(user)){  //만약 이미 userCart가 존재하면 추가하지 않게 해야함
+        if (userCartRepository.existsUserCartEntityByUser(user)){
+            log.info("[userCart] 이미 존재하는 회원의 장바구니에 물품을 추가합니다.");
             UserCartEntity usercart = userCartRepository.findUserCartEntityByUser(user);
             boolean isAlreadyInCart = cartRepository.existsCartEntityByProductAndUserCartAndCartStatus(product, usercart, "주문 전");
-            if (!isAlreadyInCart) {  //만약 이미 해당 productid에 해당하는 장바구니가 존재하면 추가하지 않아야함("주문 완료"된 상품이면 상관없음)
+            if (!isAlreadyInCart) {
                 CartEntity cart = CartEntity.builder().userCart(usercart).product(product).option(option)
                     .cartStatus("주문 전").cartQuantity(quantity).build();
+                log.info("[addCart] 새로운 물품이 장바구니에 담겼습니다.");
                 cartRepository.save(cart);
                 return ResultAddCartDto.builder()
                     .success(true)
@@ -104,6 +106,7 @@ public class CartService {
                     .cartId(cart.getCartCid())
                     .build();
             } else {
+                log.error("[ERROR] 이미 장바구니에 존재하는 물품입니다.");
                 Long cartId = cartRepository.findByProduct(product).getCartCid();
                 return ResultAddCartDto.builder()
                         .success(false)
@@ -114,8 +117,11 @@ public class CartService {
             }
         } else {
             UserCartEntity usercart = UserCartEntity.builder().user(user).build();
+            log.info("[userCart] 회원의 장바구니가 존재하지않으므로 장바구니를 생성합니다.");
+            userCartRepository.save(usercart);
             CartEntity cart = CartEntity.builder().userCart(usercart).product(product).option(option)
                 .cartStatus("주문 전").cartQuantity(quantity).build();
+            log.info("[addCart] 새로운 물품이 장바구니에 담겼습니다.");
             cartRepository.save(cart);
             return ResultAddCartDto.builder()
                 .success(true)
@@ -132,22 +138,18 @@ public class CartService {
     }}
 
 
-    public CommonResponseDto updateCart(Long productId, UpdateCartDTO modifyCartDto) {
-        // 1.해당 유저를 가져온다 유저엔티티
-        // 2. productId로 product를 가져온다.
-        // 3. 유저로 userCartEntity를 찾는다.
-        // 4. userCartEntity 와 product가 일치하는 cartEntity를 찾는다. (status가 "주문 전"이어야함)
-        // 5. 해당 cartEntity에서 option부분을 새로운 옵션엔티티를 넣어준다.
+    public CommonResponseDto updateCart(Long productId, UpdateCartDTO updateCartDTO) {
         Long userId = 1L;
         UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: " + userId));
         ProductEntity product = productRepository.findById(productId).orElseThrow(()->new NoSuchElementException("해당 제품을 찾을 수 없습니다.: " + productId));
         UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
         CartEntity cart = cartRepository.findByProductAndUserCartAndCartStatus(product,userCart,"주문 전");
-        Long optionidAfter = modifyCartDto.getOptionid();
+        Long optionidAfter = updateCartDTO.getOptionid();
         OptionEntity option = optionRepository.findById(optionidAfter).orElseThrow(()->new NoSuchElementException("해당 옵션을 찾을 수 없습니다.: " + optionidAfter));
         cart.setOption(option);
-        Integer cartQuantity = modifyCartDto.getQuantity();
+        Integer cartQuantity = updateCartDTO.getQuantity();
         cart.setCartQuantity(cartQuantity);
+        log.info("[updateCart] 장바구니에 담은 물품의 옵션 및 수량을 수정하였습니다.");
         cartRepository.save(cart);
         return CommonResponseDto.builder()
                 .success(true)
