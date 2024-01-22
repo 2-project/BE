@@ -23,5 +23,5 @@ public interface CartRepository extends JpaRepository<CartEntity,Long> {
 
     List<CartEntity> findAllByOrder(OrderEntity order);
 
-    CartEntity findByProduct(ProductEntity product);
+    CartEntity findByProductAndCartStatus(ProductEntity product, String status);
 }
