@@ -38,7 +38,8 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs/**",
-            "/api/product/*"
+            "/api/product/*",
+            "/v3/**"
     };
 
     // 인증이 필요한 api

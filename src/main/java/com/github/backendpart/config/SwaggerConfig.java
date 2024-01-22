@@ -1,5 +1,6 @@
 package com.github.backendpart.config;
 
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -12,12 +13,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    Info info = new Info()
-            .title("Api 문서")
-            .description("잘못된 부분이나 오류 발생 시 바로 말씀해주세요")
-            .contact(new Contact().name("접근하지말아주세요"));
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI openAPI(){
+        Info info = new Info()
+                .title("슈퍼코딩 2차 API명세")
+                .description("잘못된 부분이나 오류 발생 시 바로 말해주세요!")
+                .contact(new Contact()
+                        .name("superCoding_BE_team"));
+
         String jwtSchemeName = "jwtAuth";
 
         SecurityScheme bearerAuth = new SecurityScheme()
@@ -30,12 +33,9 @@ public class SwaggerConfig {
         SecurityRequirement addSecurityItem = new SecurityRequirement();
         addSecurityItem.addList("Authorization");
 
-
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Authorization", bearerAuth))
                 .addSecurityItem(addSecurityItem)
                 .info(info);
     }
-
-
 }
