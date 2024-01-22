@@ -4,11 +4,15 @@ import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.config.security.JwtTokenProvider;
 import com.github.backendpart.repository.AuthRepository;
 import com.github.backendpart.repository.RefreshTokenRepository;
+import com.github.backendpart.service.ImageUploadService;
 import com.github.backendpart.web.dto.users.*;
+import com.github.backendpart.web.entity.ProductImageEntity;
 import com.github.backendpart.web.entity.enums.Roles;
+import com.github.backendpart.web.entity.users.ProfileImageEntity;
 import com.github.backendpart.web.entity.users.RefreshToken;
 import com.github.backendpart.web.entity.users.UserEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -16,9 +20,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -26,6 +34,7 @@ public class AuthService {
   private final JwtTokenProvider jwtTokenProvider;
   private final RefreshTokenRepository refreshTokenRepository;
   private final PasswordEncoder passwordEncoder;
+  private final ImageUploadService imageUploadService;
   /**
    * UsernamePasswordAuthenticationToken을 통한 Spring Security인증 진행
    * 이후 tokenService에 userId값을 전달하여 토큰 생성
@@ -65,22 +74,30 @@ public class AuthService {
   }
 
   @Transactional
-  public void signup(RequestUserDto requestDto) {
-    if(authRepository.existsByUserId(requestDto.getUserId())) {
-      throw new RuntimeException("이미 존재하는 아이디입니다.");
-    }
-    requestDto.setUserPwd(passwordEncoder.encode(requestDto.getUserPwd()));
+  public void signup(RequestUserDto requestDto, MultipartFile multipartFile) {
+      if(authRepository.existsByUserId(requestDto.getUserId())) {
+          throw new RuntimeException("이미 존재하는 아이디입니다.");
+      }
+      requestDto.setUserPwd(passwordEncoder.encode(requestDto.getUserPwd()));
 
-    UserEntity user = UserEntity.builder()
-            .userId(requestDto.getUserId())
-            .userPwd(requestDto.getUserPwd())
-            .userName(requestDto.getUserName())
-            .userPhone(requestDto.getUserPhone())
-            .userAddress(requestDto.getUserAddress())
-            .isDeleted(null)
-            .build();
+      UserEntity user = UserEntity.builder()
+              .userId(requestDto.getUserId())
+              .userPwd(requestDto.getUserPwd())
+              .userName(requestDto.getUserName())
+              .userPhone(requestDto.getUserPhone())
+              .userAddress(requestDto.getUserAddress())
+              .isDeleted(null)
+              .build();
 
-    authRepository.save(user);
+      log.info("[build] user = " + user);
+      authRepository.save(user);
+      // 프로필 이미지가 있다면 추가
+      if(multipartFile != null) {
+          ProfileImageEntity uploadImages = imageUploadService.profileUploadImage(multipartFile);
+          user.setProfileImage(uploadImages);
+          authRepository.save(user);
+          log.info("[profileImage] 유저프로필 이미지가 추가되었습니다. uploadedImages = " + uploadImages);
+      }
   }
 
   /**

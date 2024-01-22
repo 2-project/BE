@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
 @Table(name = "profile_image_table")
 public class ProfileImageEntity extends TimeEntity {
     @Id
