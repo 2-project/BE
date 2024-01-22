@@ -34,10 +34,14 @@ public class ProductService {
     private final OptionService optionService;
     
     public GetProductDetailResponseDto findById(Long productId){
-        ProductEntity targetProduct = productRepository.findByProductCid(productId).orElse(null);
-        GetProductDetailResponseDto targetProductDto = GetProductDetailResponseDto.toDto(targetProduct);
+        ProductEntity targetProduct = productRepository.findByProductCid(productId).orElseThrow(() -> new IllegalArgumentException("해당 Product가 없습니다"));
 
-        return targetProductDto;
+        //판매기간만 조회 가능하도록
+        if(targetProduct.isSellable()) {
+            return GetProductDetailResponseDto.toDto(targetProduct);
+        }
+
+        return null;
     }
 
     @Transactional
@@ -51,8 +55,10 @@ public class ProductService {
         }
         else {
             for (ProductEntity productEntity : targetProductsEntity) {
-                System.out.println(productEntity.getProductName());
-                targetProductsDto.add(GetProductResponseDto.toDto(productEntity));
+                if(productEntity.isSellable()){
+                    targetProductsDto.add(GetProductResponseDto.toDto(productEntity));
+                    log.info("[Product] 카테고리 조회 리스트에 추가된 상품 : " + productEntity.getProductName());
+                }
             }
         }
 
