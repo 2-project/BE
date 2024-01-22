@@ -8,4 +8,11 @@ import lombok.Setter;
 @Setter
 public class UnregisterDto {
     private String password;
+
+    @Override
+    public String toString() {
+        return "OrderHistoryDto{" +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
