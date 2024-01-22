@@ -14,6 +14,7 @@ import com.github.backendpart.web.entity.CategoryEntity;
 import com.github.backendpart.web.entity.OptionEntity;
 import com.github.backendpart.web.entity.ProductEntity;
 import com.github.backendpart.web.entity.ProductImageEntity;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class AdminProductService {
     private final ImageUploadService imageUploadService;
     private final OptionService optionService;
 
+    @Transactional
     public CommonResponseDto addProduct(AddProductRequestDto addProductRequestDto, List<MultipartFile> images){
         try {
             log.info("[addProduct] 새로운 상품 추가 요청이 들어왔습니다. addProductRequestDto = " + addProductRequestDto);
@@ -82,8 +84,8 @@ public class AdminProductService {
         }
     }
 
+    @Transactional
     public CommonResponseDto deleteProduct(List<Long> productCidList) {
-
         try{
             for(Long targetCid: productCidList){
                 productRepository.deleteById(targetCid);
