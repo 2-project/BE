@@ -4,7 +4,6 @@ package com.github.backendpart.service;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.repository.AuthRepository;
 import com.github.backendpart.repository.CartRepository;
-import com.github.backendpart.repository.OrderRepository;
 import com.github.backendpart.repository.UserCartRepository;
 import com.github.backendpart.web.entity.CartEntity;
 import com.github.backendpart.web.entity.UserCartEntity;
