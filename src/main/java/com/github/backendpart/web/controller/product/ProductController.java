@@ -33,7 +33,7 @@ public class ProductController {
     @Operation(summary = "상품 카테고리별 조회")
     public ResponseEntity<List<GetProductResponseDto>> getProduct(@RequestParam(name="categoryName") String categoryName){
         log.info("GET 상품 카테고리별 조회 요청이 들어왔습니다");
-        List<GetProductResponseDto> categoryProducts = productService.findByCategory(categoryName);
+        List<GetProductResponseDto> categoryProducts = productService.findByCategory(categoryName).getProductList();
 
         log.info("GET 상품 카테고리별 조회 응답 값 = " + categoryProducts);
         return ResponseEntity.ok().body(categoryProducts);
