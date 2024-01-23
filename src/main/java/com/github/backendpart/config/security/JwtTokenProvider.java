@@ -1,9 +1,7 @@
 package com.github.backendpart.config.security;
 
-import com.github.backendpart.service.auth.UsersService;
 import com.github.backendpart.web.dto.users.TokenDto;
-import com.github.backendpart.web.entity.enums.Roles;
-import com.github.backendpart.web.entity.users.UserEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,10 @@ public class JwtTokenProvider {
     private static final Long ACCESS_TOKEN_EXPIRED_TIME = 60 * 60 * 1000L;   //60분
     private static final Long REFRESH_TOKEN_EXPIRED_TIME = 7 * 24 * 60 * 60 * 1000L;  //7일
 
-    public JwtTokenProvider(@Value("${spring.jwt.secret}")String secretKey){
+    private final UserDetailsService userDetailsService;
+
+    public JwtTokenProvider(@Value("${spring.jwt.secret}")String secretKey, UserDetailsService userDetailsService){
+      this.userDetailsService = userDetailsService;
       byte[] keyBytes = Base64.getDecoder().decode(secretKey);
       this.encodeKey = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -90,8 +91,9 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(),"", authorities);
-        return new UsernamePasswordAuthenticationToken(principal,"",authorities);
+//        UserDetails principal = new User(claims.getSubject(),"", authorities);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+        return new UsernamePasswordAuthenticationToken(userDetails, accessToken, authorities);
     }
 
     public Authentication checkRefreshToken(String refreshToken) throws ExpiredJwtException {
