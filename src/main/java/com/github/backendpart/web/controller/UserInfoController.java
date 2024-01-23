@@ -3,6 +3,8 @@ package com.github.backendpart.web.controller;
 
 import com.github.backendpart.service.UserInfoService;
 import com.github.backendpart.web.dto.UserInfoDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "회원 정보 API", description = "회원정보 조회 API입니다.")
 public class UserInfoController {
     private UserInfoService userInfoService;
 
+    @Operation(summary = "회원 정보 조회", description = "회원정보를 조회한다.")
     @GetMapping("/{userCid}/info")
     public ResponseEntity<UserInfoDto> userInfo(@PathVariable Long userCid){
         UserInfoDto userInfoDto = userInfoService.getUserInfoByUserId(userCid);
