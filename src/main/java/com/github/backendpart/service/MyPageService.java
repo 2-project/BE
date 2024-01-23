@@ -4,17 +4,13 @@ package com.github.backendpart.service;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.repository.AuthRepository;
 import com.github.backendpart.repository.MyPageRepository;
-import com.github.backendpart.repository.OrderRepository;
-import com.github.backendpart.repository.UserCartRepository;
 import com.github.backendpart.web.dto.MyPageDto;
 import com.github.backendpart.web.entity.CartEntity;
-import com.github.backendpart.web.entity.OrderEntity;
 import com.github.backendpart.web.entity.UserCartEntity;
 import com.github.backendpart.web.entity.users.UserEntity;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import org.springframework.stereotype.Repository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class MyPageService {
 
@@ -30,8 +27,9 @@ public class MyPageService {
 
     public MyPageDto getMyPageInfo(Long userId) {
         try {
-
+            log.info("GET 마이페이지 조회 요청");
             UserCartEntity userCart = getUserCartByUserId(userId);
+
 
             List<CartEntity> cartList = userCart.getCartList();
 
@@ -39,7 +37,7 @@ public class MyPageService {
                     .collect(Collectors.groupingBy(cart -> cart.getOrder().getOrderCid()));
 
             long orderCount = groupedCarts.size();
-
+            
             return MyPageDto.builder()
                     .userName(userCart.getUser().getUserName())
                     .userId(userCart.getUser().getUserId())

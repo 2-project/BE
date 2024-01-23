@@ -20,7 +20,9 @@ public class MyPageController {
 
     @GetMapping("/{userCid}")
     public ResponseEntity<MyPageDto> getMyPageInfo(@PathVariable Long userCid) {
+        log.info("GET 마이페이지 조회 요청이 들어왔습니다.");
         MyPageDto myPageDTO = myPageService.getMyPageInfo(userCid);
+        log.info("마이페이지 조회 결과: " + myPageDTO);
         return ResponseEntity.ok(myPageDTO);
     }
 }

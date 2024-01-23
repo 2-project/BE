@@ -8,6 +8,7 @@ import com.github.backendpart.web.dto.order.OrderDto;
 import com.github.backendpart.web.dto.order.PayInfoDto;
 import com.github.backendpart.web.dto.order.OrderProductListDto;
 import com.github.backendpart.web.entity.*;
+import com.github.backendpart.web.entity.users.CustomUserDetails;
 import com.github.backendpart.web.entity.users.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,22 +31,20 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public OrderDto orderCart() {
-            // <장바구니에 담긴 물품 목록을 주문페이지에서도 보여주는 로직>
-            // 1. 토큰에서 유저정보 빼오기
-//        Long userId = 토큰.getUserId;
-            Long userId = 1l;
+    public OrderDto orderCart(CustomUserDetails customUserDetails) {
+
+            Long userId = customUserDetails.getUser().getUserCid();
             UserEntity user = userInfoRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다.: " + userId));
 
             List<CartEntity> cartList = userCartRepository.findUserCartEntityByUser(user).getCartList();
-            // 2. "주문 완료"된 장바구니는 포함시키지 않아야함
+            // "주문 완료"된 장바구니는 포함시키지 않아야함
             List<CartEntity> NowCartList = cartList.stream().filter(cartEntity -> cartEntity.getCartStatus().equals("주문 전")).toList();
             List<ProductEntity> productList = NowCartList.stream().map(CartEntity::getProduct).toList();
-            // 3. 첫번째 이미지 주소와 이름 빼오기(대표사진)
+            // 첫번째 이미지 주소와 이름 빼오기(대표사진)
             List<String> imgAddress = productList.stream().map(product -> product.getProductImages().get(0).getProductImagePath()).toList();
             List<String> imgName = productList.stream().map(product -> product.getProductImages().get(0).getProductImageName()).toList();
             log.info("[order] 주문목록의 물품 정보를 가져왔습니다.");
-            // 4. 리스트에서 카트 하나씩 빼와서 mapper 및 for문으로 dto로 바꾸기
+            // 리스트에서 카트 하나씩 빼와서 mapper 및 for문으로 dto로 바꾸기
             List<OrderProductListDto> orderListDTO = NowCartList.stream().map(OrderMapper.INSTANCE::CartEntityToDTO).toList();
 
             for (int i = 0; i < orderListDTO.size(); i++) {

@@ -16,6 +16,18 @@ public class UserInfoDto {
     private String userName;
     private String userPhone;
     private String userAddress;
+
+    @Override
+    public String toString() {
+        return "UserInfoDto{" +
+                "userCid=" + userCid +
+                ", userId='" + userId + '\'' +
+                ", userPwd='" + userPwd + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", userAddress='" + userAddress + '\'' +
+                '}';
+    }
 }
 
 
