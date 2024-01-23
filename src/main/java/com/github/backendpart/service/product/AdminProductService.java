@@ -76,11 +76,7 @@ public class AdminProductService {
                     .build();
         } catch (Exception e) {
             log.error("[ERROR] 에러가 났습니다. = " + e);
-            return CommonResponseDto.builder()
-                    .success(false)
-                    .code(400)
-                    .message("상품 업로드에 실패하였습니다.")
-                    .build();
+            throw new  NotFoundException("상품을 추가하지 못했습니다.");
         }
     }
 
@@ -97,11 +93,7 @@ public class AdminProductService {
                     .build();
         }catch (Exception e){
             log.error("[DELETE] 상품을 삭제하지 못하였습니다.");
-            return CommonResponseDto.builder()
-                    .code(400)
-                    .message("상품이 존재하지 않습니다.")
-                    .success(false)
-                    .build();
+            throw new NotFoundException("상품을 삭제하지 못했습니다.");
         }
     }
 
