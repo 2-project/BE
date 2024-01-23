@@ -27,12 +27,13 @@ public class AuthController {
     private final UsersService usersService;
 
     @Operation(summary = "회원가입 요청", description = "회원가입을 한다.")
-    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> userSignUp(@Valid @RequestPart(name = "userInfo") RequestUserDto requestUserDto,
-                                             @RequestPart(name = "profileImage", required = false) MultipartFile multipartFile){
+//    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/signup")
+    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto){
         log.info("[POST] signup controller 진입");
 
-        authService.signup(requestUserDto, multipartFile);
+//        authService.signup(requestUserDto, multipartFile);
+        authService.signup(requestUserDto);
         return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.OK);
     }
     @Operation(summary = "이메일 중복 확인")

@@ -74,7 +74,7 @@ public class AuthService {
   }
 
   @Transactional
-  public void signup(RequestUserDto requestDto, MultipartFile multipartFile) {
+  public void signup(RequestUserDto requestDto) {
       if(authRepository.existsByUserId(requestDto.getUserId())) {
           throw new RuntimeException("이미 존재하는 아이디입니다.");
       }
@@ -92,12 +92,12 @@ public class AuthService {
       log.info("[build] user = " + user);
       authRepository.save(user);
       // 프로필 이미지가 있다면 추가
-      if(multipartFile != null) {
-          ProfileImageEntity uploadImages = imageUploadService.profileUploadImage(multipartFile);
-          user.setProfileImage(uploadImages);
-          authRepository.save(user);
-          log.info("[profileImage] 유저프로필 이미지가 추가되었습니다. uploadedImages = " + uploadImages);
-      }
+//      if(multipartFile != null) {
+//          ProfileImageEntity uploadImages = imageUploadService.profileUploadImage(multipartFile);
+//          user.setProfileImage(uploadImages);
+//          authRepository.save(user);
+//          log.info("[profileImage] 유저프로필 이미지가 추가되었습니다. uploadedImages = " + uploadImages);
+//      }
   }
 
   /**
