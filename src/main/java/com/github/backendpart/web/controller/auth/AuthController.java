@@ -1,21 +1,19 @@
 package com.github.backendpart.web.controller.auth;
 
-import com.github.backendpart.config.security.util.SecurityUtil;
-
-import com.github.backendpart.service.auth.TokenService;
+import com.github.backendpart.service.auth.AuthService;
 import com.github.backendpart.service.auth.UsersService;
 import com.github.backendpart.web.dto.users.*;
-import com.github.backendpart.web.entity.users.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -23,24 +21,23 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "접속관련 api", description = "유저 접속 관련")
 public class AuthController {
+    private final AuthService authService;
     private final UsersService usersService;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
 
     @Operation(summary = "회원가입 요청", description = "회원가입을 한다.")
     @PostMapping("/signup")
-    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto){
-        log.info("signup controller 진입");
-        requestUserDto.setUserPwd(passwordEncoder.encode(requestUserDto.getUserPwd()));
-        usersService.signup(requestUserDto);
+    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto,  @RequestPart(name = "profileImages", required = false) MultipartFile multipartFile){
+        log.info("[POST] signup controller controller 진입");
+
+        authService.signup(requestUserDto, multipartFile);
         return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.OK);
     }
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 한다.")
     @PostMapping("/login")
-    public ResponseEntity<ResponseTokenDto> userLogin(@RequestBody RequestLoginDto requestLoginDto) {
+    public ResponseEntity<TokenDto> userLogin(@RequestBody RequestLoginDto requestLoginDto, HttpServletResponse httpServletResponse) {
       log.info("login controller 진입");
-      TokenDto tokenDTO = usersService.login(requestLoginDto);
+      TokenDto tokenDTO = authService.login(requestLoginDto);
       ResponseCookie responseCookie = ResponseCookie
               .from("refresh_token", tokenDTO.getRefreshToken())
               .httpOnly(true)
@@ -50,26 +47,31 @@ public class AuthController {
               .path("/")
               .build();
 
-      ResponseTokenDto tokenResponseDTO = ResponseTokenDto.builder()
-              .accessToken(tokenDTO.getAccessToken())
-              .refreshToken(tokenDTO.getRefreshToken())
-              .build();
+//      httpServletResponse.setHeader("Authorization", tokenDTO.getAccessToken());
+      httpServletResponse.setHeader("Set-Cookie", responseCookie.toString());
 
-      return ResponseEntity.ok().header("Set-Cookie", responseCookie.toString()).body(tokenResponseDTO);
-    }
+      log.info("access token : {}", tokenDTO.getAccessToken());
+      log.info("refresh token: {}", tokenDTO.getRefreshToken());
+     return ResponseEntity.ok(tokenDTO);
 
-    @Operation(summary = "사용자 정보 확인", description = "사용자가 정보를 확인한다.")
-    @GetMapping("/getUserData")
-    public ResponseEntity<UserDto> loadMemberData() {
-      return ResponseEntity.ok(usersService.getUser(SecurityUtil.getCurrentUsername()));
     }
 
     @Operation(summary = "토큰 갱신")
     @PostMapping("/refreshToken")
-    public ResponseEntity<TokenDto> refreshToken(@RequestBody TokenDto tokenDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-      log.info("principalDetails : {}", customUserDetails.toString());
+    public ResponseEntity<TokenDto> refreshToken(@RequestBody RequestTokenDto tokenDTO) {
+      TokenDto tokenDto = authService.refresh(tokenDTO);
+      return ResponseEntity.ok(tokenDto);
+    }
 
-      TokenDto result = tokenService.refresh(tokenDTO, customUserDetails);
-      return ResponseEntity.ok(result);
+    @Operation(summary = "해당 아이디 유저 로그인 정보")
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseUserDto> getUserInfo(@PathVariable String userId) {
+      return ResponseEntity.ok(usersService.getLoginUserInfo(userId));
+    }
+
+    @Operation(summary = "현재 로그인 정보")
+    @GetMapping("/myInfo")
+    public ResponseEntity<ResponseUserDto> getUserInfo() {
+      return ResponseEntity.ok(usersService.getLoginUserInfo());
     }
 }

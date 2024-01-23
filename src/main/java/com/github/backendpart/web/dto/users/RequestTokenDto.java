@@ -2,21 +2,13 @@ package com.github.backendpart.web.dto.users;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
-
-//access Token과 Refresh Token을 담은 정보
-@Data
-@Builder
-@AllArgsConstructor
+@Getter
+@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TokenDto {
-    private String tokenType;
+public class RequestTokenDto {
     private String accessToken;
     private String refreshToken;
-    private Duration duration;
 }

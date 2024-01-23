@@ -9,6 +9,7 @@ import com.github.backendpart.web.entity.users.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "product_table")
+@Slf4j
 public class ProductEntity extends TimeEntity {
 
     @Id
@@ -60,5 +62,27 @@ public class ProductEntity extends TimeEntity {
     @JoinColumn(name = "category_cid", referencedColumnName = "category_cid")
     @Schema(description = "상품 카테고리", example = "인기상품")
     private CategoryEntity category;
+
+    //Date사용을 권장하지 않는다고 합니다
+    public boolean isSellable()
+    {
+        //판매가능기간
+        Date nowDate = new Date();
+        log.info("[Product] 현재 시각 : " + nowDate);
+        boolean bDate = nowDate.after(productSaleStart) && nowDate.before(productSaleEnd)
+                || nowDate.equals(productSaleStart) || nowDate.equals(productSaleEnd);
+
+        //재고가 하나라고 있어야 판매가능
+        boolean bStock = false;
+        int totalStock = 0;
+
+        for(OptionEntity option:options){
+            totalStock+=option.getOptionStock();
+        }
+
+        bStock = totalStock > 0;
+
+        return bDate&&bStock;
+    }
 
 }

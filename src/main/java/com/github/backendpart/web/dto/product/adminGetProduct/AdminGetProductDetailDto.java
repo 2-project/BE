@@ -1,13 +1,12 @@
-package com.github.backendpart.web.dto.product;
+package com.github.backendpart.web.dto.product.adminGetProduct;
 
-import com.github.backendpart.web.entity.OptionEntity;
-import com.github.backendpart.web.entity.ProductEntity;
-import com.github.backendpart.web.entity.ProductImageEntity;
+import com.github.backendpart.web.dto.product.CategoryDto;
+import com.github.backendpart.web.dto.product.OptionDto;
+import com.github.backendpart.web.dto.product.ProductImageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,31 +17,26 @@ import java.util.List;
 @Builder
 @ToString
 @Slf4j
-public class ProductDto {
+public class AdminGetProductDetailDto {
     @Schema(description = "상품 고유 아이디", example = "1")
     private Long productCid;
 
     @Schema(description = "상품 이름", example = "상품 A")
     private String productName;
 
-    @Schema(description = "상품 상세 설명", example = "상품 설명이 들어가는 칸 입니다.")
-    private String productDescription;
-
     @Schema(description = "상품 가격", example = "198000")
     private Integer productPrice;
 
     @Schema(description = "상품 판매 시작일", example = "1111-11-11")
-    private Date productSaleStart;
+    private String productSaleStart;
 
     @Schema(description = "상품 판매 종료일", example = "1111-11-11")
-    private Date productSaleEnd;
+    private String productSaleEnd;
 
     @Schema(description = "상품 옵션")
     private List<OptionDto> options;
 
-    private List<ProductImageDto> productImages;
-
     @Schema(description = "상품 카테고리", example = "인기상품")
-    private CategoryDto category;
+    private String category;
 
 }

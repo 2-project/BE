@@ -1,5 +1,6 @@
 package com.github.backendpart.config.security;
 
+import org.springframework.http.HttpMethod;
 import com.github.backendpart.config.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,13 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs/**",
-            "/api/product/*"
+            "/api/product/**",
+            "/v3/**"
+    };
+
+    // 관리자 권한이 필요한 api
+    private final String[] ADMIN_URL = {
+            "api/admin/**"
     };
 
     // 인증이 필요한 api
@@ -55,10 +62,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("*"));
-//        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addExposedHeader("Authorization");
+
+        corsConfiguration.addAllowedOriginPattern("*");
         corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addExposedHeader("Authorization");
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","PUT","POST","PATCH","DELETE","OPTIONS"));
         corsConfiguration.setMaxAge(1000L*60*60);
 
@@ -95,8 +103,10 @@ public class SecurityConfig {
                //인증 진행할 uri설정
               .authorizeHttpRequests((auth) ->
                   auth
-                      .requestMatchers(PERMIT_URL).permitAll()
-                      .requestMatchers(AUTHENTICATION_URL).authenticated()
+                          .requestMatchers(PERMIT_URL).permitAll()
+                          .requestMatchers(ADMIN_URL).hasRole("ADMIN")
+                          .requestMatchers(AUTHENTICATION_URL).authenticated()
+                          .anyRequest().hasRole("ADMIN")
               )
               .logout((logout) -> {
                   logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"));

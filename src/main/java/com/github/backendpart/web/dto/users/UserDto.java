@@ -14,10 +14,10 @@ public class UserDto {
     private String username;
     private String userPhone;
     private String userAddress;
-    private List<Roles> roles;
+    private Roles roles;
 
     @Builder
-    public UserDto(String userId, String username, String userPhone, String userAddress, List<Roles> roles) {
+    public UserDto(String userId, String username, String userPhone, String userAddress, Roles roles) {
       this.userId = userId;
       this.username = username;
       this.userPhone = userPhone;

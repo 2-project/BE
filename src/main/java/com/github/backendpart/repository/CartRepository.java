@@ -12,9 +12,6 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<CartEntity,Long> {
 
-
-    void deleteByProductAndCartStatus(ProductEntity product,String status);
-
     boolean existsCartEntityByProductAndUserCartAndCartStatus(ProductEntity product, UserCartEntity usercart,String status);
 
     CartEntity findByProductAndUserCartAndCartStatus(ProductEntity product, UserCartEntity userCart,String status);
@@ -23,5 +20,7 @@ public interface CartRepository extends JpaRepository<CartEntity,Long> {
 
     List<CartEntity> findAllByOrder(OrderEntity order);
 
-    CartEntity findByProduct(ProductEntity product);
+    CartEntity findByProductAndCartStatus(ProductEntity product, String status);
+
+    void deleteByProductAndCartStatusAndUserCart(ProductEntity product, String 주문_전, UserCartEntity userCart);
 }

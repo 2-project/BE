@@ -9,7 +9,7 @@ public class SecurityUtil {
 
   private SecurityUtil() {}
 
-  public static String getCurrentUsername() {
+  public static String getCurrentUserId() {
       final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
       log.info("SecurityUtil: " + authentication);
