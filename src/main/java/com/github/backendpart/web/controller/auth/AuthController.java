@@ -13,6 +13,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -25,10 +26,10 @@ public class AuthController {
 
     @Operation(summary = "회원가입 요청", description = "회원가입을 한다.")
     @PostMapping("/signup")
-    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto){
-        log.info("signup controller 진입");
+    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto,  @RequestPart(name = "profileImages", required = false) MultipartFile multipartFile){
+        log.info("[POST] signup controller controller 진입");
 
-        authService.signup(requestUserDto);
+        authService.signup(requestUserDto, multipartFile);
         return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.OK);
     }
 
