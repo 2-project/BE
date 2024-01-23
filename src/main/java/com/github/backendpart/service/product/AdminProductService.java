@@ -2,6 +2,8 @@ package com.github.backendpart.service.product;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.github.backendpart.repository.CategoryRepository;
+import com.github.backendpart.repository.OptionRepository;
+import com.github.backendpart.repository.ProductImageRepository;
 import com.github.backendpart.repository.ProductRepository;
 import com.github.backendpart.service.ImageUploadService;
 import com.github.backendpart.service.OptionService;
@@ -31,6 +33,8 @@ import java.util.List;
 public class AdminProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final OptionRepository optionRepository;
+    private final ProductImageRepository productImageRepository;
 
     private final ImageUploadService imageUploadService;
     private final OptionService optionService;
@@ -55,7 +59,7 @@ public class AdminProductService {
 
             // 생성된 product에 이미지 추가
             if(images != null) {
-                List<ProductImageEntity> uploadedImages = imageUploadService.uploadImages(images, newProductEntity);
+                List<ProductImageEntity> uploadedImages = imageUploadService.uploadImages(images);
                 newProductEntity.setProductImages(uploadedImages);
                 productRepository.save(newProductEntity);
                 log.info("[addProduct] 상품에 이미지가 추가되었습니다. uploadedImages = " + uploadedImages);
@@ -76,18 +80,27 @@ public class AdminProductService {
                     .build();
         } catch (Exception e) {
             log.error("[ERROR] 에러가 났습니다. = " + e);
-            return CommonResponseDto.builder()
-                    .success(false)
-                    .code(400)
-                    .message("상품 업로드에 실패하였습니다.")
-                    .build();
+            throw new  NotFoundException("상품을 추가하지 못했습니다.");
         }
     }
 
     @Transactional
     public CommonResponseDto deleteProduct(List<Long> productCidList) {
-        try{
             for(Long targetCid: productCidList){
+                ProductEntity targetProduct = productRepository.findByProductCid(targetCid).orElseThrow(()->new NotFoundException("삭제할 상품이 존재하지 않습니다."));
+                // s3 이미지 파일 삭제 로직 추가
+                if(targetProduct.getProductImages().size() != 0){
+                    for(ProductImageEntity targetImage : targetProduct.getProductImages()){
+                        imageUploadService.deleteImage(targetImage.getProductImagePath());
+                        productImageRepository.deleteById(targetImage.getProductImageCid());
+                    }
+                }
+                // 옵션 삭제 로직 추가
+                if(targetProduct.getOptions().size() != 0){
+                    for(OptionEntity targetOption : targetProduct.getOptions()){
+                        optionRepository.deleteById(targetOption.getOptionCid());
+                    }
+                }
                 productRepository.deleteById(targetCid);
             }
             return CommonResponseDto.builder()
@@ -95,14 +108,6 @@ public class AdminProductService {
                     .message("상품 삭제가 완료되었습니다..")
                     .success(true)
                     .build();
-        }catch (Exception e){
-            log.error("[DELETE] 상품을 삭제하지 못하였습니다.");
-            return CommonResponseDto.builder()
-                    .code(400)
-                    .message("상품이 존재하지 않습니다.")
-                    .success(false)
-                    .build();
-        }
     }
 
 

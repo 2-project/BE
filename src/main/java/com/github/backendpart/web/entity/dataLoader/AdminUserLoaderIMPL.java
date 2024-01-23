@@ -48,7 +48,8 @@ public class AdminUserLoaderIMPL implements CommandLineRunner {
             log.info("[CreateAdminUser] 관리자 계정이 생성되었습니다.");
 
             authRepository.save(defaultUser);
-        }
+        } else {
         log.info("[CreateAdminUser] 이미 관리자 계정이 존재하여 생성하지 않습니다.");
+        }
     }
 }

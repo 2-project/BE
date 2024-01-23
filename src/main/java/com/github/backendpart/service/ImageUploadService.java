@@ -55,7 +55,7 @@ public class ImageUploadService {
             PutObjectResult putObjectResult = amazonS3.putObject(new PutObjectRequest(
                     bucketName, changedName, byteArrayIs, metadata
             ).withCannedAcl(CannedAccessControlList.PublicRead));
-            log.info("[UploadToS3] s3에 이미지가 업로드 되었습니다. resultUrl = ");
+            log.info("[UploadToS3] s3에 이미지가 업로드 되었습니다. resultUrl = " + putObjectResult);
         } catch (IOException e){
             throw new ImageUploadExeception();
         }
@@ -63,7 +63,7 @@ public class ImageUploadService {
         return amazonS3.getUrl(bucketName, changedName).toString();
     }
 
-    public List<ProductImageEntity> uploadImages(List<MultipartFile> productImages, ProductEntity newProductEntity) {
+    public List<ProductImageEntity> uploadImages(List<MultipartFile> productImages) {
 
         List<ProductImageEntity> uploadedImages = new ArrayList<>();
 
