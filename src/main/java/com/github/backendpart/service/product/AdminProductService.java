@@ -55,7 +55,7 @@ public class AdminProductService {
 
             // 생성된 product에 이미지 추가
             if(images != null) {
-                List<ProductImageEntity> uploadedImages = imageUploadService.uploadImages(images, newProductEntity);
+                List<ProductImageEntity> uploadedImages = imageUploadService.uploadImages(images);
                 newProductEntity.setProductImages(uploadedImages);
                 productRepository.save(newProductEntity);
                 log.info("[addProduct] 상품에 이미지가 추가되었습니다. uploadedImages = " + uploadedImages);
