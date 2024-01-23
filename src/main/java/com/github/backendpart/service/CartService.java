@@ -12,9 +12,11 @@ import com.github.backendpart.web.dto.cart.UpdateCartDTO;
 import com.github.backendpart.web.dto.common.CommonResponseDto;
 import com.github.backendpart.web.dto.product.addProduct.AddProductRequestDto;
 import com.github.backendpart.web.entity.*;
+import com.github.backendpart.web.entity.users.CustomUserDetails;
 import com.github.backendpart.web.entity.users.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,12 +42,9 @@ public class CartService {
 
 
     @Transactional
-    public List<CartDto> findAllCart() {
-
-        //1. 토큰에서 유저정보 빼오기
-//        Long userId = 토큰.getUserId;
-        Long userid = 1l;
-        UserEntity user = userInfoRepository.findById(userid).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: (회원번호) " + userid));
+    public List<CartDto> findAllCart(CustomUserDetails customUserDetails) {
+        Long userId = customUserDetails.getUser().getUserCid();
+        UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: (회원번호) " + userId));
         UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
         List<CartEntity> cartList = userCart.getCartList();
         List<CartDto> cartListdto = new ArrayList<>();
@@ -73,9 +72,12 @@ public class CartService {
 
 
     @Transactional
-    public CommonResponseDto deleteCart(Long productId) {
+    public CommonResponseDto deleteCart(Long productId,CustomUserDetails customUserDetails) {
             ProductEntity product = productRepository.findById(productId).orElseThrow(() -> new NoSuchElementException("해당 제품을 찾을 수 없습니다.: (제품ID) " + productId)); //
-            cartRepository.deleteByProductAndCartStatus(product, "주문 전");
+            Long userId = customUserDetails.getUser().getUserCid();
+            UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: (회원번호) " + userId));
+            UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
+            cartRepository.deleteByProductAndCartStatusAndUserCart(product, "주문 전",userCart);
             log.info("[deleteCart] 장바구니에 담긴 물품을 삭제했습니다.");
             return CommonResponseDto.builder()
                     .success(true)
@@ -85,14 +87,14 @@ public class CartService {
     }
 
     @Transactional
-    public ResultAddCartDto addCart(Long productid, AddCartDto addCartDTO) {
+    public ResultAddCartDto addCart(Long productid, AddCartDto addCartDTO,CustomUserDetails customUserDetails) {
         Long optionId = addCartDTO.getOptionid();
         OptionEntity option = optionRepository.findById(optionId)
             .orElseThrow(()->new NoSuchElementException("해당 옵션을 찾을 수 없습니다.: (옵션번호) " + optionId));
         ProductEntity product = productRepository.findById(productid)
             .orElseThrow(()->new NoSuchElementException("해당 제품을 찾을 수 없습니다.: (물품번호) " + productid));
         Integer quantity = addCartDTO.getQuantity();
-        Long userId = 1L;
+        Long userId = customUserDetails.getUser().getUserCid();
         UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: (회원번호) " + userId));
 
         if (userCartRepository.existsUserCartEntityByUser(user)){
@@ -139,8 +141,9 @@ public class CartService {
     }
 
 
-    public CommonResponseDto updateCart(Long productId, UpdateCartDTO updateCartDTO) {
-        Long userId = 1L;
+    public CommonResponseDto updateCart(Long productId, UpdateCartDTO updateCartDTO
+            ,CustomUserDetails customUserDetails) {
+        Long userId = customUserDetails.getUser().getUserCid();
         UserEntity user = userInfoRepository.findById(userId).orElseThrow(()->new NoSuchElementException("해당 유저를 찾을 수 없습니다.: (회원번호) " + userId));
         ProductEntity product = productRepository.findById(productId).orElseThrow(()->new NoSuchElementException("해당 제품을 찾을 수 없습니다.: (물품번호) " + productId));
         UserCartEntity userCart = userCartRepository.findUserCartEntityByUser(user);
