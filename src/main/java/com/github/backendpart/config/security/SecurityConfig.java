@@ -36,6 +36,7 @@ public class SecurityConfig {
     private final String[] PERMIT_URL = {
             "/auth/login",
             "/auth/signup",
+            "/auth/signup/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/api-docs/**",

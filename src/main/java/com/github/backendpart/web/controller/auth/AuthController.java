@@ -6,9 +6,11 @@ import com.github.backendpart.web.dto.users.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,12 +27,20 @@ public class AuthController {
     private final UsersService usersService;
 
     @Operation(summary = "회원가입 요청", description = "회원가입을 한다.")
-    @PostMapping("/signup")
-    public ResponseEntity<String> userSignUp(@RequestBody RequestUserDto requestUserDto,  @RequestPart(name = "profileImages", required = false) MultipartFile multipartFile){
-        log.info("[POST] signup controller controller 진입");
+    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> userSignUp(@Valid @RequestPart(name = "userInfo") RequestUserDto requestUserDto,
+                                             @RequestPart(name = "profileImage", required = false) MultipartFile multipartFile){
+        log.info("[POST] signup controller 진입");
 
         authService.signup(requestUserDto, multipartFile);
         return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.OK);
+    }
+    @Operation(summary = "이메일 중복 확인")
+    @PostMapping("/singup/{userEmail}")
+    public ResponseEntity<String> emailCkeck(@PathVariable String userEmail){
+        log.info("[POST] email check cotroller 진입");
+        String result = authService.userIdCheck(userEmail);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 한다.")
@@ -52,8 +62,7 @@ public class AuthController {
 
       log.info("access token : {}", tokenDTO.getAccessToken());
       log.info("refresh token: {}", tokenDTO.getRefreshToken());
-     return ResponseEntity.ok(tokenDTO);
-
+      return ResponseEntity.ok(tokenDTO);
     }
 
     @Operation(summary = "토큰 갱신")
