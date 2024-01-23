@@ -23,4 +23,15 @@ public class OrderHistoryDto {
     private Integer productPrice;
 
     private LocalDateTime orderAt;
+
+    @Override
+    public String toString() {
+        return "OrderHistoryDto{" +
+                ", productImages='" + productImages + '\'' +
+                ", productName='" + productName + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", productPrice='" + productPrice + '\'' +
+                ", orderAt='" + orderAt + '\'' +
+                '}';
+    }
 }
